@@ -1,0 +1,27 @@
+{
+  "name": "cordova-plugin-sharesdk",
+  "version": "0.0.1",
+  "description": "封装sharesdk,使hybird app能快速集成分享功能",
+  "cordova": {
+    "id": "cordova-plugin-sharesdk",
+    "platforms": [
+      "android",
+      "ios"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zhaolin0801/cordova-plugin-sharesdk.git"
+  },
+  "keywords": [
+    "cordova",
+    "ecosystem:cordova",
+    "cordova-android",
+    "cordova-ios",
+    "share",
+    "sharesdk",
+    "ionic",
+    "react"
+  ],
+  "license": "MIT"
+}
