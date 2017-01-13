@@ -85,7 +85,7 @@
                                            type:SSDKContentTypeAuto];
         
         //进行分享
-        [ShareSDK share:SSDKPlatformTypeWechat //传入分享的平台类型
+        [ShareSDK share:[[shareInfo objectForKey:@"platformType"]integerValue] //传入分享的平台类型
              parameters:shareParams
          onStateChanged:^(SSDKResponseState state, NSDictionary *userData, SSDKContentEntity *contentEntity, NSError *error) {
          //回调处理....
