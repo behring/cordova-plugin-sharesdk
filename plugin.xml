@@ -6,6 +6,7 @@
     <license>MIT</license>
     <keywords>cordova,sharesdk,share,ionic</keywords>
     <!--声明需要传入的平台信息-->
+    <preference name="SHARESDK_ANDROID_APP_KEY" />
     <preference name="SHARESDK_IOS_APP_KEY" />
     <preference name="WECHAT_APP_ID" />
     <preference name="WECHAT_APP_SECRET" />
@@ -18,7 +19,61 @@
     <js-module src="www/sharesdk.js" name="ShareSDK">
         <clobbers target="sharesdk.share" />
     </js-module>
-    <!--reference url http://wiki.mob.com/ios%E7%AE%80%E6%B4%81%E7%89%88%E5%BF%AB%E9%80%9F%E9%9B%86%E6%88%90/-->
+    <!--reference http://wiki.mob.com/Android_%E5%BF%AB%E9%80%9F%E9%9B%86%E6%88%90%E6%8C%87%E5%8D%97/-->
+    <platform name="android">
+        <hook type="after_plugin_install" src="scripts/android_after_plugin_install.js" />
+        <!-- ShareSDK Sources -->
+        <source-file src="src/android/ShareSDK/assets/ShareSDK.xml" target-dir="assets" />
+        <source-file src="src/android/ShareSDK/src/cn" target-dir="src" />
+        <source-file src="src/android/ShareSDK/res/values/ssdk_oks_strings.xml" target-dir="res/values" />
+        <source-file src="src/android/ShareSDK/res/values/ssdk_strings.xml" target-dir="res/values" />
+        <!-- ShareSDK Libs -->
+        <lib-file src="src/android/ShareSDK/libs/MobCommons-2016.1222.1756.jar" />
+        <lib-file src="src/android/ShareSDK/libs/MobTools-2016.1222.1756.jar" />
+        <lib-file src="src/android/ShareSDK/libs/ShareSDK-Core-2.8.0.jar" />
+        <lib-file src="src/android/ShareSDK/libs/ShareSDK-Wechat-2.8.0.jar" />
+        <lib-file src="src/android/ShareSDK/libs/ShareSDK-Wechat-Core-2.8.0.jar" />
+        <lib-file src="src/android/ShareSDK/libs/ShareSDK-Wechat-Moments-2.8.0.jar" />
+        <!--添加权限-->
+        <config-file target="AndroidManifest.xml" parent="/*">
+            <uses-permission android:name="android.permission.GET_TASKS" />
+            <uses-permission android:name="android.permission.INTERNET" />
+            <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+            <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+            <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+            <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+            <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+            <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
+            <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+            <!-- 蓝牙分享所需的权限 -->
+            <uses-permission android:name="android.permission.BLUETOOTH" />
+            <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+        </config-file>
+        <!-- ShareSDK Config Xml -->
+        <edit-config file="assets/ShareSDK.xml" target="/DevInfor/ShareSDK" mode="overwrite">
+            <ShareSDK AppKey="$SHARESDK_ANDROID_APP_KEY" />
+        </edit-config>
+        <!-- Wechat微信和WechatMoments微信朋友圈的appid是一样的.微信测试的时候，微信测试需要先签名打包出apk,BypassApproval是绕过审核的标记，设置为true后AppId将被忽略，故不经过审核的应用也可以执行分享，但是仅限于分享文字和图片，不能分享其他类型.默认值为false。此外，微信收藏不支持此字段。-->
+        <edit-config file="assets/ShareSDK.xml" target="/DevInfor/Wechat" mode="overwrite">
+            <Wechat Id="4" SortId="4" AppId="$WECHAT_APP_ID" AppSecret="$WECHAT_APP_SECRET" BypassApproval="true" Enable="true" />
+        </edit-config>
+        <edit-config file="assets/ShareSDK.xml" target="/DevInfor/WechatMoments" mode="overwrite">
+            <WechatMoments Id="5" SortId="5" AppId="$WECHAT_APP_ID" AppSecret="$WECHAT_APP_SECRET" BypassApproval="true" Enable="true" />
+        </edit-config>
+        <config-file target="AndroidManifest.xml" parent="/manifest/application">
+            <!--微信分享回调 WXEntryActivity是相对路径，所以需要获取当前项目的包名，动态copy到指定目录。通过cordova的hook完成-->
+            <activity android:name=".wxapi.WXEntryActivity" android:theme="@android:style/Theme.Translucent.NoTitleBar" android:configChanges="keyboardHidden|orientation|screenSize" android:exported="true" android:screenOrientation="portrait" />
+        </config-file>
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="ShareSDK">
+                <param name="android-package" value="behring.cordovasharesdk.ShareSDKPlugin" />
+                <param name="onload" value="true" />
+            </feature>
+        </config-file>
+        <!-- Plugin Source -->
+        <source-file src="src/android/ShareSDKPlugin.java" target-dir="src/behring/cordovasharesdk" />
+    </platform>
+    <!--reference http://wiki.mob.com/ios%E7%AE%80%E6%B4%81%E7%89%88%E5%BF%AB%E9%80%9F%E9%9B%86%E6%88%90/-->
     <platform name="ios">
         <!--添加Scheme白名单 reference url http://wiki.mob.com/ios9-%E5%AF%B9sharesdk%E7%9A%84%E5%BD%B1%E5%93%8D%EF%BC%88%E9%80%82%E9%85%8Dios-9%E5%BF%85%E8%AF%BB%EF%BC%89/-->
         <config-file target="*-Info.plist" parent="LSApplicationQueriesSchemes">
@@ -27,7 +82,7 @@
                 <string>wechat</string>
             </array>
         </config-file>
-        <!--配置URL Scheme reference：http://bbs.mob.com/thread-567-1-1.html-->
+        <!--配置URL Scheme reference http://bbs.mob.com/thread-567-1-1.html-->
         <config-file target="*-Info.plist" parent="CFBundleURLTypes">
             <array>
                 <dict>
