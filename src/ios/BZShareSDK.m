@@ -19,23 +19,11 @@
     _wechatAppId = [[self.commandDelegate settings] objectForKey:@"wechatappid"];
     _wechatAppSecret = [[self.commandDelegate settings] objectForKey:@"wechatappsecret"];
     
-    if(_shareSDKiOSAppKey)
-    {
-        NSMutableArray *incomingSocialPlatforms = [NSMutableArray array];
-        /**微信分享*/
-        if(_wechatAppId && _wechatAppSecret) {
-              [incomingSocialPlatforms addObject:@(SSDKPlatformTypeWechat)];
-        }else {
-        	NSLog(@"WECHAT_APP_ID or WECHAT_APP_SECRET is null");
-        }
-        
-        [self initSocialPlatforms:incomingSocialPlatforms];
-        
-    }
-    else
-    {
-    	NSLog(@"SHARESDK_IOS_APP_KEY is null");
-    }
+    NSMutableArray *incomingSocialPlatforms = [NSMutableArray array];
+    /**微信分享*/
+    [incomingSocialPlatforms addObject:@(SSDKPlatformTypeWechat)];
+    
+    [self initSocialPlatforms:incomingSocialPlatforms];
 }
 
 - (void) initSocialPlatforms:(NSArray*)incomingSocialPlatforms
@@ -47,26 +35,26 @@
      *  在此事件中写入连接代码。第四个参数则为配置本地社交平台时触发，根据返回的平台类型来配置平台信息。
      *  如果您使用的时服务端托管平台信息时，第二、四项参数可以传入nil，第三项参数则根据服务端托管平台来决定要连接的社交SDK。
      */
-     [ShareSDK registerApp:_shareSDKiOSAppKey activePlatforms:incomingSocialPlatforms onImport:^(SSDKPlatformType platformType) {
-         
-         switch (platformType)
-         {
-             case SSDKPlatformTypeWechat:
-                 [ShareSDKConnector connectWeChat:[WXApi class]];
-                 break;
+    [ShareSDK registerApp:_shareSDKiOSAppKey activePlatforms:incomingSocialPlatforms onImport:^(SSDKPlatformType platformType) {
+        
+        switch (platformType)
+        {
+            case SSDKPlatformTypeWechat:
+                [ShareSDKConnector connectWeChat:[WXApi class]];
+                break;
             default:
-                 break;
-         }
-     } onConfiguration:^(SSDKPlatformType platformType, NSMutableDictionary *appInfo) {
-         switch (platformType)
-         {
-             case SSDKPlatformTypeWechat:
-                 [appInfo SSDKSetupWeChatByAppId:_wechatAppId appSecret:_wechatAppSecret];
-                 break;
+                break;
+        }
+    } onConfiguration:^(SSDKPlatformType platformType, NSMutableDictionary *appInfo) {
+        switch (platformType)
+        {
+            case SSDKPlatformTypeWechat:
+                [appInfo SSDKSetupWeChatByAppId:_wechatAppId appSecret:_wechatAppSecret];
+                break;
             default:
-                 break;
-         }
-     }];
+                break;
+        }
+    }];
 }
 
 - (void)share:(CDVInvokedUrlCommand*)command
@@ -88,12 +76,12 @@
         [ShareSDK share:[[shareInfo objectForKey:@"platformType"]integerValue] //传入分享的平台类型
              parameters:shareParams
          onStateChanged:^(SSDKResponseState state, NSDictionary *userData, SSDKContentEntity *contentEntity, NSError *error) {
-         //回调处理....
-         	pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"share success"];
-      	    NSLog(@"state: %lu, userData: %@, contentEntity: %@, error: %@",state,userData,contentEntity,error);
-      	   	[self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+             //回调处理....
+             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"share success"];
+             NSLog(@"state: %lu, userData: %@, contentEntity: %@, error: %@",state,userData,contentEntity,error);
+             [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
          }];
-
+        
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_NO_RESULT];
     }
     else
