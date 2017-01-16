@@ -66,6 +66,9 @@
     NSDictionary* shareInfo = [command.arguments objectAtIndex:2];
    
     switch ([shareType integerValue]) {
+        case SSDKContentTypeText:
+        [self shareText:platformType shareInfo:shareInfo];
+        break;
         case SSDKContentTypeImage:
             [self shareImages:platformType shareInfo:shareInfo];
         break;
@@ -74,29 +77,36 @@
     }
 }
 
+
+- (void)shareText:(NSNumber *)platformType shareInfo:(NSDictionary *)shareInfo
+{
+        __block CDVPluginResult* pluginResult = nil;
+        NSMutableDictionary *shareParams = [NSMutableDictionary dictionary];
+        [shareParams SSDKSetupShareParamsByText:[shareInfo objectForKey:@"text"]
+                                         images:nil
+                                            url:nil
+                                          title:nil
+                                           type:SSDKContentTypeText];
+        //进行分享
+        [ShareSDK share:[platformType integerValue] //传入分享的平台类型
+             parameters:shareParams
+         onStateChanged:^(SSDKResponseState state, NSDictionary *userData, SSDKContentEntity *contentEntity, NSError *error)
+         {
+             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"share success"];
+             NSLog(@"state: %lu, userData: %@, contentEntity: %@, error: %@",state,userData,contentEntity,error);
+             [self.commandDelegate sendPluginResult:pluginResult callbackId:_command.callbackId];
+         }];
+}
+    
 - (void)shareImages:(NSNumber *)platformType shareInfo:(NSDictionary *)shareInfo
 {
     __block CDVPluginResult* pluginResult = nil;
     NSMutableDictionary *shareParams = [NSMutableDictionary dictionary];
-    switch ([platformType integerValue]) {
-        case SSDKPlatformSubTypeWechatTimeline:
-            [shareParams SSDKSetupShareParamsByText:nil
-                                         images:[shareInfo objectForKey:@"images"]
-                                            url:nil
-                                          title:nil
-                                           type:SSDKContentTypeImage];
-        break;
-        case SSDKPlatformSubTypeWechatSession:
-            [shareParams SSDKSetupShareParamsByText:nil
-                                         images:[shareInfo objectForKey:@"images"]
-                                            url:nil
-                                          title:nil
-                                           type:SSDKContentTypeImage];
-        break;
-        default:
-        break;
-    }
-    
+    [shareParams SSDKSetupShareParamsByText:nil
+                                     images:[shareInfo objectForKey:@"images"]
+                                        url:nil
+                                      title:nil
+                                       type:SSDKContentTypeImage];
     //进行分享
     [ShareSDK share:[platformType integerValue] //传入分享的平台类型
          parameters:shareParams
