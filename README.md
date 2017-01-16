@@ -18,163 +18,174 @@ Cordova Plugin ShareSDK封装了[ShareSDK](http://sharesdk.mob.com/)的android�
 
 1. 进入cordova项目目录。
 
-   ```powershell
-   cd ~/yourpath/cordovaproject
-   ```
-
+```powershell
+cd ~/yourpath/cordovaproject
+```
 
 2. 安装cordova-plugin-sharesdk。
 
-   ```powershell
-   cordova plugin add cordova-plugin-sharesdk --save
-   ```
+```powershell
+cordova plugin add cordova plugin add cordova-plugin-sharesdk --variable SHARESDK_ANDROID_APP_KEY=xxxxxx --variable SHARESDK_IOS_APP_KEY=xxxxxx --variable WECHAT_APP_ID=xxxxxx --variable WECHAT_APP_SECRET=xxxxxx --save
+```
 
 3. 重新构建cordova项目。
 
-   ```powershell
-   cordova build
-   ```
+```powershell
+cordova build
+```
 
 4. 通过下面js代码完成分享。
 
-   ```javascript
-   /** 分享纯文本 */
-   function shareText(platformType) {
-       var text='这是一条测试文本~~~~';
-       var shareInfo = {text:text};
-       sharesdk.share(platformType, ShareSDK.ShareType.Text, shareInfo,
-                      function(success){},
-                      function(fail){});
-   }
+```javascript
+/** 分享纯文本 */
+function shareText(platformType) {
+    var text='这是一条测试文本~~~~';
+    var shareInfo = {text:text};
+    sharesdk.share(platformType, ShareSDK.ShareType.Text, shareInfo,
+                   function(success){},
+                   function(fail){});
+}
 
-   /** 分享图片，多张使用数组 */
-   function shareImages(platformType) {
-       var images = ['https://github.com/zhaolin0801/cordova-sharesdk-demo/blob/master/www/img/Wechat-QRcode.jpeg?raw=true','https://github.com/zhaolin0801/cordova-sharesdk-demo/blob/master/www/img/Wechat-QRcode.jpeg?raw=true'];
-       var shareInfo = {images:images};
-       sharesdk.share(platformType, ShareSDK.ShareType.Image, shareInfo,
-                      function(success){},
-                      function(fail){});
-   }
+/** 分享图片，多张使用数组 */
+function shareImages(platformType) {
+    var images = ['https://github.com/zhaolin0801/cordova-sharesdk-demo/blob/master/www/img/Wechat-QRcode.jpeg?raw=true','https://github.com/zhaolin0801/cordova-sharesdk-demo/blob/master/www/img/Wechat-QRcode.jpeg?raw=true'];
+    var shareInfo = {images:images};
+    sharesdk.share(platformType, ShareSDK.ShareType.Image, shareInfo,
+                   function(success){},
+                   function(fail){});
+}
 
-   /** 分享网页 */
-   function shareWebPage(platformType) {
-       var icon = 'https://github.com/zhaolin0801/cordova-sharesdk-demo/blob/master/www/img/Wechat-QRcode.jpeg?raw=true';
-       var title = '这是网页的标题';
-       var text = '这是网页的内容，android未签名只能分享单张图片到朋友圈';
-       var url = 'http://carhot.cn/articles/1';
-       var shareInfo = {icon:icon, title:title, text:text, url:url};
-       sharesdk.share(platformType, ShareSDK.ShareType.WebPage, shareInfo,
-                      function(success){},
-                      function(fail){});
-   }
+/** 分享网页 */
+function shareWebPage(platformType) {
+    var icon = 'https://github.com/zhaolin0801/cordova-sharesdk-demo/blob/master/www/img/Wechat-QRcode.jpeg?raw=true';
+    var title = '这是网页的标题';
+    var text = '这是网页的内容，android未签名只能分享单张图片到朋友圈';
+    var url = 'http://carhot.cn/articles/1';
+    var shareInfo = {icon:icon, title:title, text:text, url:url};
+    sharesdk.share(platformType, ShareSDK.ShareType.WebPage, shareInfo,
+                   function(success){},
+                   function(fail){});
+}
 
-   function shareTextToWechatSession() {
-       shareText(ShareSDK.PlatformType.WechatSession);
-   }
+function shareTextToWechatSession() {
+    shareText(ShareSDK.PlatformType.WechatSession);
+}
 
-   function shareImagesToWechatSession() {
-       shareImages(ShareSDK.PlatformType.WechatSession);
-   }
+function shareImagesToWechatSession() {
+    shareImages(ShareSDK.PlatformType.WechatSession);
+}
 
-   function shareWebPageToWechatSession() {
-       shareWebPage(ShareSDK.PlatformType.WechatSession);
-   }
-
-
-   function shareTextToWechatTimeline() {
-       shareText(ShareSDK.PlatformType.WechatTimeline);
-   }
-
-   function shareImagesToWechatTimeline() {
-       shareImages(ShareSDK.PlatformType.WechatTimeline);
-   }
-
-   function shareWebPageToWechatTimeline() {
-       shareWebPage(ShareSDK.PlatformType.WechatTimeline);
-   }
-   ```
-
-   ​
-
-   #### ionic2项目
-
-   1. 进入ionic2项目目录。
-
-      ```powershell
-      cd ~/yourpath/ionicproject
-      ```
+function shareWebPageToWechatSession() {
+    shareWebPage(ShareSDK.PlatformType.WechatSession);
+}
 
 
-   1. 安装cordova-plugin-sharesdk。
+function shareTextToWechatTimeline() {
+    shareText(ShareSDK.PlatformType.WechatTimeline);
+}
 
-      ```powershell
-      cordova plugin add cordova-plugin-sharesdk --save
-      ```
+function shareImagesToWechatTimeline() {
+    shareImages(ShareSDK.PlatformType.WechatTimeline);
+}
 
-   2. 重新构建cordova项目。
+function shareWebPageToWechatTimeline() {
+    shareWebPage(ShareSDK.PlatformType.WechatTimeline);
+}
+```
 
-      ```powershell
-      cordova build
-      ```
 
-   3. 配置cordova-plugin-sharesdk全局变量。在ionic项目的declarations.d.ts文件添加下面2行代码。
 
-      ```typescript
-      declare var sharesdk: any;
-      declare var ShareSDK: any;
-      ```
+#### ionic2项目
 
-   4. 通过下面**Cordova项目**第4步中的代码进行分享。
+1. 进入ionic2项目目录。
 
-      > 因为插件中的变量是cordova注入的，在网页运行会报错，变量为定义。需要做判断处理。
-      >
-      > ```typescript
-      > if("undefined" != typeof ShareSDK){....}
-      > or
-      > if("undefined" != typeof sharesdk){....}
-      > ```
+```powershell
+cd ~/yourpath/ionicproject
+```
 
-   ​
+2. 安装cordova-plugin-sharesdk。
 
-   ### 关于cordova-plugin-cordova中全局变量说明
+```powershell
+cordova plugin add cordova plugin add cordova-plugin-sharesdk --variable SHARESDK_ANDROID_APP_KEY=xxxxxx --variable SHARESDK_IOS_APP_KEY=xxxxxx --variable WECHAT_APP_ID=xxxxxx --variable WECHAT_APP_SECRET=xxxxxx --save
+```
 
-   安装完cordova-plugin-sharesdk后，window下有2个全局变量，sharesdk和ShareSDK。
+3. 重新构建cordova项目。
 
-   1. sharesdk：只提供一个share方法，shareInfo是一个object类型。包含要分享的数据。可用key参考下文。
+```powershell
+cordova build
+```
 
-   ```javascript
-   sharesdk.share(platformType, shareType, shareInfo,
-                      function(success){},
-                      function(fail){});
-   ```
+4. 配置cordova-plugin-sharesdk全局变量。在ionic项目的declarations.d.ts文件添加下面2行代码。
 
-   2. ShareSDK：提供platformType，和shareType常量。如下表：
+```typescript
+declare var sharesdk: any;
+declare var ShareSDK: any;
+```
 
-      | platformType类型                       | 说明    |
-      | ------------------------------------ | ----- |
-      | ShareSDK.PlatformType.QQFriend       | QQ好友  |
-      | ShareSDK.PlatformType.QZone          | QQ空间  |
-      | ShareSDK.PlatformType.Copy           | 拷贝    |
-      | ShareSDK.PlatformType.WechatSession  | 微信好友  |
-      | ShareSDK.PlatformType.WechatTimeline | 微信朋友圈 |
-      | ShareSDK.PlatformType.SinaWeibo      | 新浪微博  |
+5. 通过**Cordova项目**第4步中的代码进行分享。
 
-      | shareType类型                | 说明   |
-      | -------------------------- | ---- |
-      | ShareSDK.ShareType.Text    | 文本类型 |
-      | ShareSDK.ShareType.Image   | 图片类型 |
-      | ShareSDK.ShareType.WebPage | 网页类型 |
+> 因为插件中的变量是cordova注入的，在网页运行会报错，变量为定义。需要做判断处理。
+>
+> ```typescript
+> if("undefined" != typeof ShareSDK){....}
+> or
+> if("undefined" != typeof sharesdk){....}
+> ```
 
-   ​
 
-   ### Demo地址
 
-   https://github.com/zhaolin0801/cordova-sharesdk-demo
+### 关于安装插件参数说明
 
-   ​
+在第2步添加[cordova-plugin-sharesdk](https://github.com/zhaolin0801/cordova-plugin-sharesdk.git) 插件的时候需要输入对应分享平台的Key和Secret作为参数。参数对应如下表：
 
-   ### 问题
+| 参数                       | 说明                                       |
+| ------------------------ | ---------------------------------------- |
+| SHARESDK_IOS_APP_KEY     | [ShareSDK注册(iOS)](http://www.mob.com/)   |
+| SHARESDK_ANDROID_APP_KEY | [ShareSDK注册(Android)](http://www.mob.com/) |
+| WECHAT_APP_ID            | [微信开放平台注册](https://open.weixin.qq.com/)  |
+| WECHAT_APP_SECRET        | [微信开放平台注册](https://open.weixin.qq.com/)  |
 
-   1. Android微信分享需要使用审核通过后的签名文件打包才能分享。
-   2. 目前仅支持android和ios平台的微信分享。包括：纯文本，图片，网页。
+
+
+### 关于cordova-plugin-cordova中全局变量说明
+
+安装完cordova-plugin-sharesdk后，window下有2个全局变量，sharesdk和ShareSDK。
+
+sharesdk：只提供一个share方法，shareInfo是一个object类型。包含要分享的数据。可用key参考下文。
+
+```javascript
+sharesdk.share(platformType, shareType, shareInfo,
+                   function(success){},
+                   function(fail){});
+```
+
+ShareSDK：提供platformType，和shareType常量。如下表：
+
+| platformType类型                       | 说明    |
+| ------------------------------------ | ----- |
+| ShareSDK.PlatformType.QQFriend       | QQ好友  |
+| ShareSDK.PlatformType.QZone          | QQ空间  |
+| ShareSDK.PlatformType.Copy           | 拷贝    |
+| ShareSDK.PlatformType.WechatSession  | 微信好友  |
+| ShareSDK.PlatformType.WechatTimeline | 微信朋友圈 |
+| ShareSDK.PlatformType.SinaWeibo      | 新浪微博  |
+
+| shareType类型                | 说明   |
+| -------------------------- | ---- |
+| ShareSDK.ShareType.Text    | 文本类型 |
+| ShareSDK.ShareType.Image   | 图片类型 |
+| ShareSDK.ShareType.WebPage | 网页类型 |
+
+
+
+### Demo地址
+
+https://github.com/zhaolin0801/cordova-sharesdk-demo
+
+
+
+### 问题
+
+1. Android微信分享需要使用审核通过后的签名文件打包才能分享。
+2. 目前仅支持android和ios平台的微信分享。包括：纯文本，图片，网页。
 
