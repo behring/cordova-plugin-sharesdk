@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--id: 插件的标识，即发布到 plugins.cordova.io 的 ID,生成的插件文件夹名也与此相同-->
-<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" id="cordova-plugin-sharesdk" version="0.0.1">
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" id="cordova-plugin-sharesdk" version="0.0.2">
     <name>ShareSDK</name>
     <description>Cordova ShareSDK Plugin</description>
     <license>MIT</license>
@@ -27,7 +27,7 @@
         <hook type="after_plugin_install" src="scripts/android_after_plugin_install.js" />
         <!-- ShareSDK Sources -->
         <source-file src="src/android/ShareSDK/assets/ShareSDK.xml" target-dir="assets" />
-        <source-file src="src/android/ShareSDK/src/cn" target-dir="src" />
+        <source-file src="src/android/ShareSDK/src/cn/sharesdk/onekeyshare" target-dir="src/cn/sharesdk" />
         <source-file src="src/android/ShareSDK/res/values/ssdk_oks_strings.xml" target-dir="res/values" />
         <source-file src="src/android/ShareSDK/res/values/ssdk_strings.xml" target-dir="res/values" />
         <!-- ShareSDK Libs -->
