@@ -1,7 +1,6 @@
 package behring.cordovasharesdk;
 
 import android.util.Log;
-
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaInterface;
 import org.apache.cordova.CordovaPlugin;
@@ -9,46 +8,30 @@ import org.apache.cordova.CordovaWebView;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.HashMap;
-
 import cn.sharesdk.framework.Platform;
 import cn.sharesdk.framework.PlatformActionListener;
 import cn.sharesdk.framework.ShareSDK;
 import cn.sharesdk.wechat.friends.Wechat;
+import cn.sharesdk.wechat.moments.WechatMoments;
 
 /**
  * This class ShareSDKPlugin a string called from JavaScript.
  */
 public class ShareSDKPlugin extends CordovaPlugin {
-    /**
-     *  QQ空间
-     */
+    /**平台和分享类型的值参考ShareSDK ios源码中的值*/
+    /** QQ空间 */
     private final int SSDKPlatformSubTypeQZone = 6;
-    /**
-     *  邮件
-     */
-    private final int SSDKPlatformTypeMail = 18;
-    /**
-     *  短信
-     */
-    private final int SSDKPlatformTypeSMS = 19;
-
-    /**
-     *  拷贝
-     */
+    /** 拷贝 */
     private final int SSDKPlatformTypeCopy = 21;
-
-    /**
-     *  微信好友
-     */
+    /** 微信好友 */
     private final int SSDKPlatformSubTypeWechatSession = 22;
-
-    /**
-     *  微信朋友圈
-     */
+    /** 微信朋友圈 */
     private final int SSDKPlatformSubTypeWechatTimeline = 23;
 
+    private static final int SHARE_TEXT = 1;
+    private static final int SHARE_IMAGE = 2;
+    private static final int SHARE_WEBPAGE = 3;
     @Override
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
         super.initialize(cordova, webView);
@@ -57,59 +40,64 @@ public class ShareSDKPlugin extends CordovaPlugin {
 
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
-        Log.d("ShareSDKPlugin", "action: " + action);
-        Log.d("ShareSDKPlugin", "args: " + args);
         if (action.equals("share")) {
-            JSONObject shareInfo = new JSONObject(args.getString(0));
-            this.share(shareInfo, callbackContext);
+            int platformType = args.optInt(0);
+            int shareType = args.optInt(1);
+            JSONObject shareInfo = args.optJSONObject(2);
+            this.share(platformType, shareType, shareInfo, callbackContext);
             return true;
         }
         return false;
     }
 
-    private void share(JSONObject shareInfo, CallbackContext callbackContext) {
-        if (shareInfo != null && shareInfo.length() > 0) {
-            switch (shareInfo.optInt("platformType")) {
-                case SSDKPlatformSubTypeWechatSession:
-                    this.shareToWechat(shareInfo, callbackContext);
-                    break;
-                default:
-                    break;
-            }
+    private void share(int platformType, int shareType, JSONObject shareInfo, CallbackContext callbackContext) {
 
-        } else {
-            callbackContext.error("Expected one non-empty string argument.");
+        switch (shareType) {
+            case SHARE_IMAGE:
+                this.shareImages(platformType, shareInfo, callbackContext);
+                break;
+            default:
+                break;
         }
     }
 
-    private void shareToWechat(JSONObject shareInfo, final CallbackContext callbackContext) {
-        Wechat.ShareParams sp = new Wechat.ShareParams();
-        sp.setTitle(shareInfo.optString("title"));
-        sp.setText(shareInfo.optString("content"));
-        sp.setImagePath((String) shareInfo.optJSONArray("images").opt(0));
-        sp.setUrl(shareInfo.optString("url"));
-        Platform wechat = ShareSDK.getPlatform(Wechat.NAME);
-        wechat.setPlatformActionListener(new PlatformActionListener() {
+    private void shareImages(int platformType, JSONObject shareInfo, final CallbackContext callbackContext) {
+        Platform.ShareParams sp = null;
+        Platform platform = null;
+        switch (platformType) {
+            case SSDKPlatformSubTypeWechatSession:
+                sp = new Wechat.ShareParams();
+                sp.setShareType(Platform.SHARE_IMAGE);
+                sp.setImageUrl((String) shareInfo.optJSONArray("images").opt(0));
+                platform = ShareSDK.getPlatform(Wechat.NAME);
+                break;
+            case SSDKPlatformSubTypeWechatTimeline:
+                sp = new WechatMoments.ShareParams();
+                sp.setShareType(Platform.SHARE_IMAGE);
+                sp.setImageUrl((String) shareInfo.optJSONArray("images").opt(0));
+                platform = ShareSDK.getPlatform(WechatMoments.NAME);
+                break;
+            default:
+                break;
+        }
+
+
+        platform.setPlatformActionListener(new PlatformActionListener() {
             @Override
             public void onComplete(Platform platform, int i, HashMap<String, Object> hashMap) {
-                //分享成功的回调
-                Log.d("ShareSDKPlugin", "onComplete! platform: " + platform + ", action: " + i + ", map: " + hashMap);
                 callbackContext.success("分享成功");
             }
 
             @Override
             public void onError(Platform platform, int i, Throwable throwable) {
-                //失败的回调，arg:平台对象，arg1:表示当前的动作，arg2:异常信息
                 Log.e("ShareSDKPlugin", "onError! platform: " + platform + ", action: " + i + ", map: " + throwable);
             }
 
             @Override
             public void onCancel(Platform platform, int i) {
-                //取消分享的回调
                 Log.d("ShareSDKPlugin", "onCancel! platform: " + platform + ", action: " + i);
             }
-        }); // 设置分享事件回调
-        // 执行分享
-        wechat.share(sp);
+        });
+        platform.share(sp);
     }
 }

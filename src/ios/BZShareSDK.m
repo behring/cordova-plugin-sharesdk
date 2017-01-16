@@ -10,6 +10,7 @@
 @property(strong,nonatomic) NSString* shareSDKiOSAppKey;
 @property(strong,nonatomic) NSString* wechatAppId;
 @property(strong,nonatomic) NSString* wechatAppSecret;
+@property(strong,nonatomic) CDVInvokedUrlCommand* command;
 @end
 
 @implementation BZShareSDK
@@ -59,37 +60,52 @@
 
 - (void)share:(CDVInvokedUrlCommand*)command
 {
-    __block CDVPluginResult* pluginResult = nil;
-    NSDictionary* shareInfo = [command.arguments objectAtIndex:0];
-    
-    if (shareInfo != nil && [shareInfo count] > 0)
-    {
-        //创建分享参数
-        NSMutableDictionary *shareParams = [NSMutableDictionary dictionary];
-        [shareParams SSDKSetupShareParamsByText:[shareInfo objectForKey:@"content"]
-                                         images:[shareInfo objectForKey:@"images"] //传入要分享的图片
-                                            url:[NSURL URLWithString:[shareInfo objectForKey:@"url"]]
-                                          title:[shareInfo objectForKey:@"title"]
-                                           type:SSDKContentTypeAuto];
-        
-        //进行分享
-        [ShareSDK share:[[shareInfo objectForKey:@"platformType"]integerValue] //传入分享的平台类型
-             parameters:shareParams
-         onStateChanged:^(SSDKResponseState state, NSDictionary *userData, SSDKContentEntity *contentEntity, NSError *error) {
-             //回调处理....
-             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"share success"];
-             NSLog(@"state: %lu, userData: %@, contentEntity: %@, error: %@",state,userData,contentEntity,error);
-             [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
-         }];
-        
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_NO_RESULT];
+    _command = command;
+    NSNumber* platformType = [command.arguments objectAtIndex:0];
+    NSNumber* shareType = [command.arguments objectAtIndex:1];
+    NSDictionary* shareInfo = [command.arguments objectAtIndex:2];
+   
+    switch ([shareType integerValue]) {
+        case SSDKContentTypeImage:
+            [self shareImages:platformType shareInfo:shareInfo];
+        break;
+        default:
+        break;
     }
-    else
-    {
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
-    }
-    
-    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
+- (void)shareImages:(NSNumber *)platformType shareInfo:(NSDictionary *)shareInfo
+{
+    __block CDVPluginResult* pluginResult = nil;
+    NSMutableDictionary *shareParams = [NSMutableDictionary dictionary];
+    switch ([platformType integerValue]) {
+        case SSDKPlatformSubTypeWechatTimeline:
+            [shareParams SSDKSetupShareParamsByText:nil
+                                         images:[shareInfo objectForKey:@"images"]
+                                            url:nil
+                                          title:nil
+                                           type:SSDKContentTypeImage];
+        break;
+        case SSDKPlatformSubTypeWechatSession:
+            [shareParams SSDKSetupShareParamsByText:nil
+                                         images:[shareInfo objectForKey:@"images"]
+                                            url:nil
+                                          title:nil
+                                           type:SSDKContentTypeImage];
+        break;
+        default:
+        break;
+    }
+    
+    //进行分享
+    [ShareSDK share:[platformType integerValue] //传入分享的平台类型
+         parameters:shareParams
+     onStateChanged:^(SSDKResponseState state, NSDictionary *userData, SSDKContentEntity *contentEntity, NSError *error)
+    {
+         
+         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"share success"];
+         NSLog(@"state: %lu, userData: %@, contentEntity: %@, error: %@",state,userData,contentEntity,error);
+         [self.commandDelegate sendPluginResult:pluginResult callbackId:_command.callbackId];
+     }];
+}
 @end
