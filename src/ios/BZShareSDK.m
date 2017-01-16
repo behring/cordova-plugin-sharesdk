@@ -67,10 +67,13 @@
    
     switch ([shareType integerValue]) {
         case SSDKContentTypeText:
-        [self shareText:platformType shareInfo:shareInfo];
+            [self shareText:platformType shareInfo:shareInfo];
         break;
         case SSDKContentTypeImage:
             [self shareImages:platformType shareInfo:shareInfo];
+        break;
+        case SSDKContentTypeWebPage:
+            [self shareWebPage:platformType shareInfo:shareInfo];
         break;
         default:
         break;
@@ -117,5 +120,26 @@
          NSLog(@"state: %lu, userData: %@, contentEntity: %@, error: %@",state,userData,contentEntity,error);
          [self.commandDelegate sendPluginResult:pluginResult callbackId:_command.callbackId];
      }];
+}
+    
+- (void)shareWebPage:(NSNumber *)platformType shareInfo:(NSDictionary *)shareInfo
+{
+        __block CDVPluginResult* pluginResult = nil;
+        NSMutableDictionary *shareParams = [NSMutableDictionary dictionary];
+        [shareParams SSDKSetupShareParamsByText:[shareInfo objectForKey:@"text"]
+                                         images:[shareInfo objectForKey:@"icon"]
+                                            url:[shareInfo objectForKey:@"url"]
+                                          title:[shareInfo objectForKey:@"title"]
+                                           type:SSDKContentTypeWebPage];
+        //进行分享
+        [ShareSDK share:[platformType integerValue] //传入分享的平台类型
+             parameters:shareParams
+         onStateChanged:^(SSDKResponseState state, NSDictionary *userData, SSDKContentEntity *contentEntity, NSError *error)
+         {
+             
+             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"share success"];
+             NSLog(@"state: %lu, userData: %@, contentEntity: %@, error: %@",state,userData,contentEntity,error);
+             [self.commandDelegate sendPluginResult:pluginResult callbackId:_command.callbackId];
+         }];
 }
 @end

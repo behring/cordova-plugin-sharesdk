@@ -59,6 +59,9 @@ public class ShareSDKPlugin extends CordovaPlugin {
             case SHARE_IMAGE:
                 this.shareImages(platformType, shareInfo, callbackContext);
                 break;
+            case SHARE_WEBPAGE:
+                this.shareWebPage(platformType, shareInfo, callbackContext);
+                break;
             default:
                 break;
         }
@@ -74,7 +77,6 @@ public class ShareSDKPlugin extends CordovaPlugin {
                 break;
             case SSDKPlatformSubTypeWechatTimeline:
                 sp = new WechatMoments.ShareParams();
-
                 platform = ShareSDK.getPlatform(WechatMoments.NAME);
                 break;
             default:
@@ -120,6 +122,46 @@ public class ShareSDKPlugin extends CordovaPlugin {
 
         sp.setShareType(Platform.SHARE_IMAGE);
         sp.setImageUrl((String) shareInfo.optJSONArray("images").opt(0));
+        platform.setPlatformActionListener(new PlatformActionListener() {
+            @Override
+            public void onComplete(Platform platform, int i, HashMap<String, Object> hashMap) {
+                callbackContext.success("分享成功");
+            }
+
+            @Override
+            public void onError(Platform platform, int i, Throwable throwable) {
+                Log.e("ShareSDKPlugin", "onError! platform: " + platform + ", action: " + i + ", map: " + throwable);
+            }
+
+            @Override
+            public void onCancel(Platform platform, int i) {
+                Log.d("ShareSDKPlugin", "onCancel! platform: " + platform + ", action: " + i);
+            }
+        });
+        platform.share(sp);
+    }
+
+    private void shareWebPage(int platformType, JSONObject shareInfo, final CallbackContext callbackContext) {
+        Platform.ShareParams sp = null;
+        Platform platform = null;
+        switch (platformType) {
+            case SSDKPlatformSubTypeWechatSession:
+                sp = new Wechat.ShareParams();
+                platform = ShareSDK.getPlatform(Wechat.NAME);
+                break;
+            case SSDKPlatformSubTypeWechatTimeline:
+                sp = new WechatMoments.ShareParams();
+                platform = ShareSDK.getPlatform(WechatMoments.NAME);
+                break;
+            default:
+                break;
+        }
+
+        sp.setShareType(Platform.SHARE_WEBPAGE);
+        sp.setImageUrl(shareInfo.optString("icon"));
+        sp.setTitle(shareInfo.optString("title"));
+        sp.setUrl(shareInfo.optString("url"));
+        sp.setText(shareInfo.optString("text"));
         platform.setPlatformActionListener(new PlatformActionListener() {
             @Override
             public void onComplete(Platform platform, int i, HashMap<String, Object> hashMap) {
