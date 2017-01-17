@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-sharesdk",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "封装sharesdk,使hybird app能快速集成分享功能",
   "cordova": {
     "id": "cordova-plugin-sharesdk",
