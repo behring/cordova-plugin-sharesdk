@@ -115,6 +115,18 @@ ionic plugin add cordova-plugin-sharesdk --variable SHARESDK_ANDROID_APP_KEY=xxx
 cordova build
 ```
 
+> anroid中的微信分享需要审核通过，并且打包release版本。
+>
+> ```
+> cordova build android --release
+> ```
+>
+> andorid打包的app签名一定要和微信开放平台注册的app签名一致！否则无法分享成功。微信开放平台填写的签名必须是**小写字母无分号**格式。
+>
+> 查看手机上安装的app签名apk[下载地址](http://file3.data.weipan.cn.wscdns.com/28171732/1a592358248a8c3cf185a2f1598abd2ebbece95c?ip=1484656202,117.36.140.26&ssig=54WbKKSkVd&Expires=1484656802&KID=sae,l30zoo1wmz&fn=gen_signature.apk&skiprd=2&se_ip_debug=117.36.140.26&corp=2&from=1221134)
+
+
+
 4. 配置cordova-plugin-sharesdk全局变量。在ionic项目的declarations.d.ts文件添加下面2行代码。
 
 ```typescript
