@@ -67,7 +67,11 @@
    
     switch ([shareType integerValue]) {
         case SSDKContentTypeText:
+        if([platformType integerValue] == SSDKPlatformTypeCopy) {
+            [self copyLink:shareInfo];
+        }else {
             [self shareText:platformType shareInfo:shareInfo];
+        }
         break;
         case SSDKContentTypeImage:
             [self shareImages:platformType shareInfo:shareInfo];
@@ -80,10 +84,17 @@
     }
 }
 
+- (void)copyLink:(NSDictionary *)shareInfo
+{
+    CDVPluginResult* pluginResult = nil;
+    UIPasteboard* pasteboard = [UIPasteboard generalPasteboard];
+    pasteboard.string = [shareInfo objectForKey:@"text"];
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:_command.callbackId];
+}
 
 - (void)shareText:(NSNumber *)platformType shareInfo:(NSDictionary *)shareInfo
 {
-        __block CDVPluginResult* pluginResult = nil;
         NSMutableDictionary *shareParams = [NSMutableDictionary dictionary];
         [shareParams SSDKSetupShareParamsByText:[shareInfo objectForKey:@"text"]
                                          images:nil
@@ -95,15 +106,12 @@
              parameters:shareParams
          onStateChanged:^(SSDKResponseState state, NSDictionary *userData, SSDKContentEntity *contentEntity, NSError *error)
          {
-             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"share success"];
-             NSLog(@"state: %lu, userData: %@, contentEntity: %@, error: %@",state,userData,contentEntity,error);
-             [self.commandDelegate sendPluginResult:pluginResult callbackId:_command.callbackId];
+            [self returnStateToTrigger:error];
          }];
 }
     
 - (void)shareImages:(NSNumber *)platformType shareInfo:(NSDictionary *)shareInfo
 {
-    __block CDVPluginResult* pluginResult = nil;
     NSMutableDictionary *shareParams = [NSMutableDictionary dictionary];
     [shareParams SSDKSetupShareParamsByText:nil
                                      images:[shareInfo objectForKey:@"images"]
@@ -113,18 +121,14 @@
     //进行分享
     [ShareSDK share:[platformType integerValue] //传入分享的平台类型
          parameters:shareParams
-     onStateChanged:^(SSDKResponseState state, NSDictionary *userData, SSDKContentEntity *contentEntity, NSError *error)
-    {
-         
-         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"share success"];
-         NSLog(@"state: %lu, userData: %@, contentEntity: %@, error: %@",state,userData,contentEntity,error);
-         [self.commandDelegate sendPluginResult:pluginResult callbackId:_command.callbackId];
-     }];
+        onStateChanged:^(SSDKResponseState state, NSDictionary *userData, SSDKContentEntity *contentEntity, NSError *error)
+        {
+            [self returnStateToTrigger:error];
+        }];
 }
     
 - (void)shareWebPage:(NSNumber *)platformType shareInfo:(NSDictionary *)shareInfo
 {
-        __block CDVPluginResult* pluginResult = nil;
         NSMutableDictionary *shareParams = [NSMutableDictionary dictionary];
         [shareParams SSDKSetupShareParamsByText:[shareInfo objectForKey:@"text"]
                                          images:[shareInfo objectForKey:@"icon"]
@@ -136,10 +140,17 @@
              parameters:shareParams
          onStateChanged:^(SSDKResponseState state, NSDictionary *userData, SSDKContentEntity *contentEntity, NSError *error)
          {
-             
-             pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"share success"];
-             NSLog(@"state: %lu, userData: %@, contentEntity: %@, error: %@",state,userData,contentEntity,error);
-             [self.commandDelegate sendPluginResult:pluginResult callbackId:_command.callbackId];
+             [self returnStateToTrigger:error];
          }];
+}
+
+-(void)returnStateToTrigger:(NSError *)error {
+    CDVPluginResult* pluginResult = nil;
+    if(!error) {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
+    }else {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:[error localizedDescription]];
+    }
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:_command.callbackId];
 }
 @end

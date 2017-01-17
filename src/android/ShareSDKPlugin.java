@@ -1,6 +1,8 @@
 package behring.cordovasharesdk;
 
-import android.util.Log;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaInterface;
 import org.apache.cordova.CordovaPlugin;
@@ -32,6 +34,28 @@ public class ShareSDKPlugin extends CordovaPlugin {
     private static final int SHARE_TEXT = 1;
     private static final int SHARE_IMAGE = 2;
     private static final int SHARE_WEBPAGE = 3;
+
+    private CallbackContext callbackContext;
+    private PlatformActionListener platformActionStateListener = new PlatformActionListener() {
+        @Override
+        public void onComplete(Platform platform, int i, HashMap<String, Object> hashMap) {
+            if(callbackContext!=null)
+                callbackContext.success();
+        }
+
+        @Override
+        public void onError(Platform platform, int i, Throwable throwable) {
+            if(callbackContext!=null)
+                callbackContext.error(throwable.toString());
+        }
+
+        @Override
+        public void onCancel(Platform platform, int i) {
+            if(callbackContext!=null)
+                callbackContext.error(i);
+        }
+    };
+
     @Override
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
         super.initialize(cordova, webView);
@@ -40,6 +64,7 @@ public class ShareSDKPlugin extends CordovaPlugin {
 
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
+        this.callbackContext = callbackContext;
         if (action.equals("share")) {
             int platformType = args.optInt(0);
             int shareType = args.optInt(1);
@@ -54,7 +79,12 @@ public class ShareSDKPlugin extends CordovaPlugin {
 
         switch (shareType) {
             case SHARE_TEXT:
-                this.shareText(platformType, shareInfo, callbackContext);
+                if(platformType == SSDKPlatformTypeCopy) {
+                    this.copyLink(shareInfo, callbackContext);
+                }else {
+                    this.shareText(platformType, shareInfo, callbackContext);
+                }
+
                 break;
             case SHARE_IMAGE:
                 this.shareImages(platformType, shareInfo, callbackContext);
@@ -65,6 +95,14 @@ public class ShareSDKPlugin extends CordovaPlugin {
             default:
                 break;
         }
+    }
+
+    private void copyLink(JSONObject shareInfo, final CallbackContext callbackContext) {
+        ClipboardManager myClipboard = (ClipboardManager)cordova.getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+        String text = shareInfo.optString("text");
+        ClipData clipData = ClipData.newPlainText("text", text);
+        myClipboard.setPrimaryClip(clipData);
+        callbackContext.success();
     }
 
     private void shareText(int platformType, JSONObject shareInfo, final CallbackContext callbackContext) {
@@ -85,22 +123,7 @@ public class ShareSDKPlugin extends CordovaPlugin {
 
         sp.setShareType(Platform.SHARE_TEXT);
         sp.setText(shareInfo.optString("text"));
-        platform.setPlatformActionListener(new PlatformActionListener() {
-            @Override
-            public void onComplete(Platform platform, int i, HashMap<String, Object> hashMap) {
-                callbackContext.success("分享成功");
-            }
-
-            @Override
-            public void onError(Platform platform, int i, Throwable throwable) {
-                Log.e("ShareSDKPlugin", "onError! platform: " + platform + ", action: " + i + ", map: " + throwable);
-            }
-
-            @Override
-            public void onCancel(Platform platform, int i) {
-                Log.d("ShareSDKPlugin", "onCancel! platform: " + platform + ", action: " + i);
-            }
-        });
+        platform.setPlatformActionListener(platformActionStateListener);
         platform.share(sp);
     }
 
@@ -122,22 +145,7 @@ public class ShareSDKPlugin extends CordovaPlugin {
 
         sp.setShareType(Platform.SHARE_IMAGE);
         sp.setImageUrl((String) shareInfo.optJSONArray("images").opt(0));
-        platform.setPlatformActionListener(new PlatformActionListener() {
-            @Override
-            public void onComplete(Platform platform, int i, HashMap<String, Object> hashMap) {
-                callbackContext.success("分享成功");
-            }
-
-            @Override
-            public void onError(Platform platform, int i, Throwable throwable) {
-                Log.e("ShareSDKPlugin", "onError! platform: " + platform + ", action: " + i + ", map: " + throwable);
-            }
-
-            @Override
-            public void onCancel(Platform platform, int i) {
-                Log.d("ShareSDKPlugin", "onCancel! platform: " + platform + ", action: " + i);
-            }
-        });
+        platform.setPlatformActionListener(platformActionStateListener);
         platform.share(sp);
     }
 
@@ -162,22 +170,7 @@ public class ShareSDKPlugin extends CordovaPlugin {
         sp.setTitle(shareInfo.optString("title"));
         sp.setUrl(shareInfo.optString("url"));
         sp.setText(shareInfo.optString("text"));
-        platform.setPlatformActionListener(new PlatformActionListener() {
-            @Override
-            public void onComplete(Platform platform, int i, HashMap<String, Object> hashMap) {
-                callbackContext.success("分享成功");
-            }
-
-            @Override
-            public void onError(Platform platform, int i, Throwable throwable) {
-                Log.e("ShareSDKPlugin", "onError! platform: " + platform + ", action: " + i + ", map: " + throwable);
-            }
-
-            @Override
-            public void onCancel(Platform platform, int i) {
-                Log.d("ShareSDKPlugin", "onCancel! platform: " + platform + ", action: " + i);
-            }
-        });
+        platform.setPlatformActionListener(platformActionStateListener);
         platform.share(sp);
     }
 }

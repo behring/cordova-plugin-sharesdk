@@ -25,7 +25,7 @@ cd ~/yourpath/cordovaproject
 2. 安装cordova-plugin-sharesdk。
 
 ```powershell
-cordova plugin add cordova plugin add cordova-plugin-sharesdk --variable SHARESDK_ANDROID_APP_KEY=xxxxxx --variable SHARESDK_IOS_APP_KEY=xxxxxx --variable WECHAT_APP_ID=xxxxxx --variable WECHAT_APP_SECRET=xxxxxx --save
+cordova plugin add cordova-plugin-sharesdk --variable SHARESDK_ANDROID_APP_KEY=xxxxxx --variable SHARESDK_IOS_APP_KEY=xxxxxx --variable WECHAT_APP_ID=xxxxxx --variable WECHAT_APP_SECRET=xxxxxx --save
 ```
 
 3. 重新构建cordova项目。
@@ -106,7 +106,7 @@ cd ~/yourpath/ionicproject
 2. 安装cordova-plugin-sharesdk。
 
 ```powershell
-cordova plugin add cordova plugin add cordova-plugin-sharesdk --variable SHARESDK_ANDROID_APP_KEY=xxxxxx --variable SHARESDK_IOS_APP_KEY=xxxxxx --variable WECHAT_APP_ID=xxxxxx --variable WECHAT_APP_SECRET=xxxxxx --save
+ionic plugin add cordova-plugin-sharesdk --variable SHARESDK_ANDROID_APP_KEY=xxxxxx --variable SHARESDK_IOS_APP_KEY=xxxxxx --variable WECHAT_APP_ID=xxxxxx --variable WECHAT_APP_SECRET=xxxxxx --save
 ```
 
 3. 重新构建cordova项目。
