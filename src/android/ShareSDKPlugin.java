@@ -14,6 +14,7 @@ import java.util.HashMap;
 import cn.sharesdk.framework.Platform;
 import cn.sharesdk.framework.PlatformActionListener;
 import cn.sharesdk.framework.ShareSDK;
+import cn.sharesdk.sina.weibo.SinaWeibo;
 import cn.sharesdk.wechat.friends.Wechat;
 import cn.sharesdk.wechat.moments.WechatMoments;
 
@@ -22,14 +23,16 @@ import cn.sharesdk.wechat.moments.WechatMoments;
  */
 public class ShareSDKPlugin extends CordovaPlugin {
     /**平台和分享类型的值参考ShareSDK ios源码中的值*/
+    /** 新浪微博 */
+    private final int SSDKPlatformTypeWeibo = 1;
     /** QQ空间 */
-    private final int SSDKPlatformSubTypeQZone = 6;
+    private final int SSDKPlatformTypeQZone = 6;
     /** 拷贝 */
     private final int SSDKPlatformTypeCopy = 21;
     /** 微信好友 */
-    private final int SSDKPlatformSubTypeWechatSession = 22;
+    private final int SSDKPlatformTypeWechatSession = 22;
     /** 微信朋友圈 */
-    private final int SSDKPlatformSubTypeWechatTimeline = 23;
+    private final int SSDKPlatformTypeWechatTimeline = 23;
 
     private static final int SHARE_TEXT = 1;
     private static final int SHARE_IMAGE = 2;
@@ -87,7 +90,7 @@ public class ShareSDKPlugin extends CordovaPlugin {
 
                 break;
             case SHARE_IMAGE:
-                this.shareImages(platformType, shareInfo, callbackContext);
+                this.shareImage(platformType, shareInfo, callbackContext);
                 break;
             case SHARE_WEBPAGE:
                 this.shareWebPage(platformType, shareInfo, callbackContext);
@@ -109,42 +112,52 @@ public class ShareSDKPlugin extends CordovaPlugin {
         Platform.ShareParams sp = null;
         Platform platform = null;
         switch (platformType) {
-            case SSDKPlatformSubTypeWechatSession:
+            case SSDKPlatformTypeWechatSession:
                 sp = new Wechat.ShareParams();
+                sp.setShareType(Platform.SHARE_TEXT);
                 platform = ShareSDK.getPlatform(Wechat.NAME);
                 break;
-            case SSDKPlatformSubTypeWechatTimeline:
+            case SSDKPlatformTypeWechatTimeline:
                 sp = new WechatMoments.ShareParams();
+                sp.setShareType(Platform.SHARE_TEXT);
                 platform = ShareSDK.getPlatform(WechatMoments.NAME);
+                break;
+            case SSDKPlatformTypeWeibo:
+                sp = new SinaWeibo.ShareParams();
+                platform = ShareSDK.getPlatform(SinaWeibo.NAME);
                 break;
             default:
                 break;
         }
 
-        sp.setShareType(Platform.SHARE_TEXT);
         sp.setText(shareInfo.optString("text"));
         platform.setPlatformActionListener(platformActionStateListener);
         platform.share(sp);
     }
 
-    private void shareImages(int platformType, JSONObject shareInfo, final CallbackContext callbackContext) {
+    private void shareImage(int platformType, JSONObject shareInfo, final CallbackContext callbackContext) {
         Platform.ShareParams sp = null;
         Platform platform = null;
         switch (platformType) {
-            case SSDKPlatformSubTypeWechatSession:
+            case SSDKPlatformTypeWechatSession:
                 sp = new Wechat.ShareParams();
+                sp.setShareType(Platform.SHARE_IMAGE);
                 platform = ShareSDK.getPlatform(Wechat.NAME);
                 break;
-            case SSDKPlatformSubTypeWechatTimeline:
+            case SSDKPlatformTypeWechatTimeline:
                 sp = new WechatMoments.ShareParams();
+                sp.setShareType(Platform.SHARE_IMAGE);
                 platform = ShareSDK.getPlatform(WechatMoments.NAME);
+                break;
+            case SSDKPlatformTypeWeibo:
+                sp = new SinaWeibo.ShareParams();
+                platform = ShareSDK.getPlatform(SinaWeibo.NAME);
                 break;
             default:
                 break;
         }
 
-        sp.setShareType(Platform.SHARE_IMAGE);
-        sp.setImageUrl((String) shareInfo.optJSONArray("images").opt(0));
+        sp.setImageUrl(shareInfo.optString("image"));
         platform.setPlatformActionListener(platformActionStateListener);
         platform.share(sp);
     }
@@ -153,19 +166,24 @@ public class ShareSDKPlugin extends CordovaPlugin {
         Platform.ShareParams sp = null;
         Platform platform = null;
         switch (platformType) {
-            case SSDKPlatformSubTypeWechatSession:
+            case SSDKPlatformTypeWechatSession:
                 sp = new Wechat.ShareParams();
+                sp.setShareType(Platform.SHARE_WEBPAGE);
                 platform = ShareSDK.getPlatform(Wechat.NAME);
                 break;
-            case SSDKPlatformSubTypeWechatTimeline:
+            case SSDKPlatformTypeWechatTimeline:
                 sp = new WechatMoments.ShareParams();
                 platform = ShareSDK.getPlatform(WechatMoments.NAME);
+                break;
+            case SSDKPlatformTypeWeibo:
+                sp = new SinaWeibo.ShareParams();
+                sp.setShareType(Platform.SHARE_WEBPAGE);
+                platform = ShareSDK.getPlatform(SinaWeibo.NAME);
                 break;
             default:
                 break;
         }
 
-        sp.setShareType(Platform.SHARE_WEBPAGE);
         sp.setImageUrl(shareInfo.optString("icon"));
         sp.setTitle(shareInfo.optString("title"));
         sp.setUrl(shareInfo.optString("url"));

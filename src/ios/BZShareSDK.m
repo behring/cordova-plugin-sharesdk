@@ -94,7 +94,7 @@
             }
             break;
         case SSDKContentTypeImage:
-            [self shareImages:platformType shareInfo:shareInfo];
+            [self shareImage:platformType shareInfo:shareInfo];
             break;
         case SSDKContentTypeWebPage:
             [self shareWebPage:platformType shareInfo:shareInfo];
@@ -132,11 +132,11 @@
      }];
 }
 
-- (void)shareImages:(NSNumber *)platformType shareInfo:(NSDictionary *)shareInfo
+- (void)shareImage:(NSNumber *)platformType shareInfo:(NSDictionary *)shareInfo
 {
     NSMutableDictionary *shareParams = [NSMutableDictionary dictionary];
     [shareParams SSDKSetupShareParamsByText:nil
-                                     images:[shareInfo objectForKey:@"images"]
+                                     images:[shareInfo objectForKey:@"image"]
                                         url:nil
                                       title:nil
                                        type:SSDKContentTypeImage];
