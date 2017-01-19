@@ -5,11 +5,16 @@
 #import <ShareSDKConnector/ShareSDKConnector.h>
 //微信SDK头文件
 #import "WXApi.h"
+//新浪微博SDK头文件
+#import "WeiboSDK.h"
 
 @interface BZShareSDK()
 @property(strong,nonatomic) NSString* shareSDKiOSAppKey;
 @property(strong,nonatomic) NSString* wechatAppId;
 @property(strong,nonatomic) NSString* wechatAppSecret;
+@property(strong,nonatomic) NSString* weiboAppId;
+@property(strong,nonatomic) NSString* weiboAppSecret;
+@property(strong,nonatomic) NSString* weiboRedirectUrl;
 @property(strong,nonatomic) CDVInvokedUrlCommand* command;
 @end
 
@@ -19,10 +24,15 @@
     _shareSDKiOSAppKey = [[self.commandDelegate settings] objectForKey:@"sharesdkiosappkey"];
     _wechatAppId = [[self.commandDelegate settings] objectForKey:@"wechatappid"];
     _wechatAppSecret = [[self.commandDelegate settings] objectForKey:@"wechatappsecret"];
+    _weiboAppId = [[self.commandDelegate settings] objectForKey:@"weiboappid"];
+    _weiboAppSecret = [[self.commandDelegate settings] objectForKey:@"weiboappsecret"];
+    _weiboRedirectUrl = [[self.commandDelegate settings] objectForKey:@"weiboredirecturl"];
     
     NSMutableArray *incomingSocialPlatforms = [NSMutableArray array];
     /**微信分享*/
     [incomingSocialPlatforms addObject:@(SSDKPlatformTypeWechat)];
+    /**新浪微博分享*/
+    [incomingSocialPlatforms addObject:@(SSDKPlatformTypeSinaWeibo)];
     
     [self initSocialPlatforms:incomingSocialPlatforms];
 }
@@ -43,6 +53,9 @@
             case SSDKPlatformTypeWechat:
                 [ShareSDKConnector connectWeChat:[WXApi class]];
                 break;
+            case SSDKPlatformTypeSinaWeibo:
+                [ShareSDKConnector connectWeibo:[WeiboSDK class]];
+                break;
             default:
                 break;
         }
@@ -51,6 +64,13 @@
         {
             case SSDKPlatformTypeWechat:
                 [appInfo SSDKSetupWeChatByAppId:_wechatAppId appSecret:_wechatAppSecret];
+                break;
+            case SSDKPlatformTypeSinaWeibo:
+                //设置新浪微博应用信息,其中authType设置为使用SSO＋Web形式授权
+                [appInfo SSDKSetupSinaWeiboByAppKey:_weiboAppId
+                                          appSecret:_weiboAppSecret
+                                        redirectUri:_weiboRedirectUrl
+                                           authType:SSDKAuthTypeBoth];
                 break;
             default:
                 break;
@@ -64,23 +84,23 @@
     NSNumber* platformType = [command.arguments objectAtIndex:0];
     NSNumber* shareType = [command.arguments objectAtIndex:1];
     NSDictionary* shareInfo = [command.arguments objectAtIndex:2];
-   
+    
     switch ([shareType integerValue]) {
         case SSDKContentTypeText:
-        if([platformType integerValue] == SSDKPlatformTypeCopy) {
-            [self copyLink:shareInfo];
-        }else {
-            [self shareText:platformType shareInfo:shareInfo];
-        }
-        break;
+            if([platformType integerValue] == SSDKPlatformTypeCopy) {
+                [self copyLink:shareInfo];
+            }else {
+                [self shareText:platformType shareInfo:shareInfo];
+            }
+            break;
         case SSDKContentTypeImage:
             [self shareImages:platformType shareInfo:shareInfo];
-        break;
+            break;
         case SSDKContentTypeWebPage:
             [self shareWebPage:platformType shareInfo:shareInfo];
-        break;
+            break;
         default:
-        break;
+            break;
     }
 }
 
@@ -95,21 +115,23 @@
 
 - (void)shareText:(NSNumber *)platformType shareInfo:(NSDictionary *)shareInfo
 {
-        NSMutableDictionary *shareParams = [NSMutableDictionary dictionary];
-        [shareParams SSDKSetupShareParamsByText:[shareInfo objectForKey:@"text"]
-                                         images:nil
-                                            url:nil
-                                          title:nil
-                                           type:SSDKContentTypeText];
-        //进行分享
-        [ShareSDK share:[platformType integerValue] //传入分享的平台类型
-             parameters:shareParams
-         onStateChanged:^(SSDKResponseState state, NSDictionary *userData, SSDKContentEntity *contentEntity, NSError *error)
-         {
-            [self returnStateToTrigger:error];
-         }];
+    NSMutableDictionary *shareParams = [NSMutableDictionary dictionary];
+    [shareParams SSDKSetupShareParamsByText:[shareInfo objectForKey:@"text"]
+                                     images:nil
+                                        url:nil
+                                      title:nil
+                                       type:SSDKContentTypeText];
+    //使用客户端分享，如果没有安装客户端，使用网页分享（对于新浪微博）
+    [shareParams SSDKEnableUseClientShare];
+    //进行分享
+    [ShareSDK share:[platformType integerValue] //传入分享的平台类型
+         parameters:shareParams
+     onStateChanged:^(SSDKResponseState state, NSDictionary *userData, SSDKContentEntity *contentEntity, NSError *error)
+     {
+         [self returnStateToTrigger:error];
+     }];
 }
-    
+
 - (void)shareImages:(NSNumber *)platformType shareInfo:(NSDictionary *)shareInfo
 {
     NSMutableDictionary *shareParams = [NSMutableDictionary dictionary];
@@ -118,30 +140,34 @@
                                         url:nil
                                       title:nil
                                        type:SSDKContentTypeImage];
+    //使用客户端分享，如果没有安装客户端，使用网页分享（对于新浪微博）
+    [shareParams SSDKEnableUseClientShare];
     //进行分享
     [ShareSDK share:[platformType integerValue] //传入分享的平台类型
          parameters:shareParams
-        onStateChanged:^(SSDKResponseState state, NSDictionary *userData, SSDKContentEntity *contentEntity, NSError *error)
-        {
-            [self returnStateToTrigger:error];
-        }];
+     onStateChanged:^(SSDKResponseState state, NSDictionary *userData, SSDKContentEntity *contentEntity, NSError *error)
+     {
+         [self returnStateToTrigger:error];
+     }];
 }
-    
+
 - (void)shareWebPage:(NSNumber *)platformType shareInfo:(NSDictionary *)shareInfo
 {
-        NSMutableDictionary *shareParams = [NSMutableDictionary dictionary];
-        [shareParams SSDKSetupShareParamsByText:[shareInfo objectForKey:@"text"]
-                                         images:[shareInfo objectForKey:@"icon"]
-                                            url:[shareInfo objectForKey:@"url"]
-                                          title:[shareInfo objectForKey:@"title"]
-                                           type:SSDKContentTypeWebPage];
-        //进行分享
-        [ShareSDK share:[platformType integerValue] //传入分享的平台类型
-             parameters:shareParams
-         onStateChanged:^(SSDKResponseState state, NSDictionary *userData, SSDKContentEntity *contentEntity, NSError *error)
-         {
-             [self returnStateToTrigger:error];
-         }];
+    NSMutableDictionary *shareParams = [NSMutableDictionary dictionary];
+    [shareParams SSDKSetupShareParamsByText:[shareInfo objectForKey:@"text"]
+                                     images:[shareInfo objectForKey:@"icon"]
+                                        url:[shareInfo objectForKey:@"url"]
+                                      title:[shareInfo objectForKey:@"title"]
+                                       type:SSDKContentTypeWebPage];
+    //使用客户端分享，如果没有安装客户端，使用网页分享（对于新浪微博）
+    [shareParams SSDKEnableUseClientShare];
+    //进行分享
+    [ShareSDK share:[platformType integerValue] //传入分享的平台类型
+         parameters:shareParams
+     onStateChanged:^(SSDKResponseState state, NSDictionary *userData, SSDKContentEntity *contentEntity, NSError *error)
+     {
+         [self returnStateToTrigger:error];
+     }];
 }
 
 -(void)returnStateToTrigger:(NSError *)error {

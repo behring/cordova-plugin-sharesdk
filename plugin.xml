@@ -10,6 +10,9 @@
     <preference name="SHARESDK_IOS_APP_KEY" />
     <preference name="WECHAT_APP_ID" />
     <preference name="WECHAT_APP_SECRET" />
+    <preference name="WEIBO_APP_ID" />
+    <preference name="WEIBO_APP_SECRET" />
+    <preference name="WEIBO_REDIRECT_URL" />
     <engines>
         <!--android4.0或更高版本 mininumSdkTarget to 14-->
         <engine name="cordova-android" version=">=4.1.0" />
@@ -83,6 +86,12 @@
             <array>
                 <string>weixin</string>
                 <string>wechat</string>
+                <string>sinaweibo</string>
+                <string>sinaweibohd</string>
+                <string>sinaweibosso</string>
+                <string>sinaweibohdsso</string>
+                <string>weibosdk</string>
+                <string>weibosdk2.5</string>
             </array>
         </config-file>
         <!--配置URL Scheme reference http://bbs.mob.com/thread-567-1-1.html-->
@@ -94,6 +103,7 @@
                     <key>CFBundleURLSchemes</key>
                     <array>
                         <string>$WECHAT_APP_ID</string>
+                        <string>wb$WEIBO_APP_ID</string>
                     </array>
                 </dict>
             </array>
@@ -118,6 +128,21 @@
         <header-file src="src/ios/ShareSDK/Support/PlatformSDK/WeChatSDK/WXApi.h" />
         <header-file src="src/ios/ShareSDK/Support/PlatformSDK/WeChatSDK/WXApiObject.h" />
         <header-file src="src/ios/ShareSDK/Support/PlatformSDK/WeChatSDK/WechatAuthSDK.h" />
+        <!-- Sina Weibo Official -->
+        <resource-file src="src/ios/ShareSDK/Support/PlatformSDK/SinaWeiboSDK/WeiboSDK.bundle" />
+        <framework src="src/ios/ShareSDK/Support/PlatformConnector/SinaWeiboConnector.framework" custom="true" />
+        <source-file src="src/ios/ShareSDK/Support/PlatformSDK/SinaWeiboSDK/libWeiboSDK.a" framework="true" />
+        <header-file src="src/ios/ShareSDK/Support/PlatformSDK/SinaWeiboSDK/WBHttpRequest.h" />
+        <header-file src="src/ios/ShareSDK/Support/PlatformSDK/SinaWeiboSDK/WBHttpRequest+WeiboGame.h" />
+        <header-file src="src/ios/ShareSDK/Support/PlatformSDK/SinaWeiboSDK/WBHttpRequest+WeiboShare.h" />
+        <header-file src="src/ios/ShareSDK/Support/PlatformSDK/SinaWeiboSDK/WBHttpRequest+WeiboToken.h" />
+        <header-file src="src/ios/ShareSDK/Support/PlatformSDK/SinaWeiboSDK/WBHttpRequest+WeiboUser.h" />
+        <header-file src="src/ios/ShareSDK/Support/PlatformSDK/SinaWeiboSDK/WBSDKBasicButton.h" />
+        <header-file src="src/ios/ShareSDK/Support/PlatformSDK/SinaWeiboSDK/WBSDKCommentButton.h" />
+        <header-file src="src/ios/ShareSDK/Support/PlatformSDK/SinaWeiboSDK/WBSDKRelationshipButton.h" />
+        <header-file src="src/ios/ShareSDK/Support/PlatformSDK/SinaWeiboSDK/WeiboSDK.h" />
+        <header-file src="src/ios/ShareSDK/Support/PlatformSDK/SinaWeiboSDK/WeiboSDK+Statistics.h" />
+        <header-file src="src/ios/ShareSDK/Support/PlatformSDK/SinaWeiboSDK/WeiboUser.h" />
         <config-file target="config.xml" parent="/*">
             <feature name="ShareSDK">
                 <param name="ios-package" value="BZShareSDK" />
@@ -126,6 +151,9 @@
             <preference name="ShareSDKiOSAppKey" value="$SHARESDK_IOS_APP_KEY" />
             <preference name="WechatAppId" value="$WECHAT_APP_ID" />
             <preference name="WechatAppSecret" value="$WECHAT_APP_SECRET" />
+            <preference name="WeiboAppId" value="$WEIBO_APP_ID" />
+            <preference name="WeiboAppSecret" value="$WEIBO_APP_SECRET" />
+            <preference name="WeiboRedirectUrl" value="$WEIBO_REDIRECT_URL" />
         </config-file>
         <header-file src="src/ios/BZShareSDK.h" />
         <source-file src="src/ios/BZShareSDK.m" />
