@@ -30,5 +30,17 @@ module.exports = {
         Image: 2,
         /** 网页 */
         WebPage: 3
+    },
+
+    /** 分享响应状态 */  
+    ResponseState: {
+        /** 开始 */
+        Begin: 0,
+        /** 成功 */
+        Success: 1,
+        /** 失败 */
+        Fail: 2,
+        /** 取消 */
+        Cancel:3
     }
 };

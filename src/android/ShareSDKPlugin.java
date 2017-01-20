@@ -11,12 +11,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.HashMap;
+import java.util.Locale;
+
 import cn.sharesdk.framework.Platform;
 import cn.sharesdk.framework.PlatformActionListener;
 import cn.sharesdk.framework.ShareSDK;
 import cn.sharesdk.sina.weibo.SinaWeibo;
 import cn.sharesdk.wechat.friends.Wechat;
 import cn.sharesdk.wechat.moments.WechatMoments;
+
 
 /**
  * This class ShareSDKPlugin a string called from JavaScript.
@@ -38,6 +41,14 @@ public class ShareSDKPlugin extends CordovaPlugin {
     private static final int SHARE_IMAGE = 2;
     private static final int SHARE_WEBPAGE = 3;
 
+    /**参考sharesdk中ios枚举型:SSDKResponseState*/
+    private static final int RESPONSE_STATE_BEGIN = 0;
+    private static final int RESPONSE_STATE_SUCCESS = 1;
+    private static final int RESPONSE_STATE_FAIL = 2;
+    private static final int RESPONSE_STATE_CANCEL = 3;
+
+
+
     private CallbackContext callbackContext;
     private PlatformActionListener platformActionStateListener = new PlatformActionListener() {
         @Override
@@ -48,14 +59,31 @@ public class ShareSDKPlugin extends CordovaPlugin {
 
         @Override
         public void onError(Platform platform, int i, Throwable throwable) {
-            if(callbackContext!=null)
-                callbackContext.error(throwable.toString());
+            if(callbackContext!=null) {
+                JSONObject jsonObject = new JSONObject();
+                try {
+                    jsonObject.putOpt("state", RESPONSE_STATE_FAIL);
+                    jsonObject.putOpt("error", throwable.toString());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }finally {
+                    callbackContext.error(jsonObject);
+                }
+            }
         }
 
         @Override
         public void onCancel(Platform platform, int i) {
-            if(callbackContext!=null)
-                callbackContext.error(i);
+            if(callbackContext!=null) {
+                JSONObject jsonObject = new JSONObject();
+                try {
+                    jsonObject.putOpt("state", RESPONSE_STATE_CANCEL);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }finally {
+                    callbackContext.error(jsonObject);
+                }
+            }
         }
     };
 

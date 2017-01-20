@@ -128,7 +128,7 @@
          parameters:shareParams
      onStateChanged:^(SSDKResponseState state, NSDictionary *userData, SSDKContentEntity *contentEntity, NSError *error)
      {
-         [self returnStateToTrigger:error];
+         [self returnStateToTrigger:state error:error];
      }];
 }
 
@@ -147,7 +147,7 @@
          parameters:shareParams
      onStateChanged:^(SSDKResponseState state, NSDictionary *userData, SSDKContentEntity *contentEntity, NSError *error)
      {
-         [self returnStateToTrigger:error];
+         [self returnStateToTrigger:state error:error];
      }];
 }
 
@@ -166,16 +166,20 @@
          parameters:shareParams
      onStateChanged:^(SSDKResponseState state, NSDictionary *userData, SSDKContentEntity *contentEntity, NSError *error)
      {
-         [self returnStateToTrigger:error];
+         [self returnStateToTrigger:state error:error];
      }];
 }
 
--(void)returnStateToTrigger:(NSError *)error {
+-(void)returnStateToTrigger:(SSDKResponseState)state error:(NSError *)error {
     CDVPluginResult* pluginResult = nil;
-    if(!error) {
+    if(state == SSDKResponseStateSuccess) {
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
     }else {
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:[error localizedDescription]];
+        if(error) {
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:@{@"state":[NSNumber numberWithInt:state], @"error":[error localizedDescription]}];
+        }else {
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary:@{@"state":[NSNumber numberWithInt:state]}];
+        }
     }
     [self.commandDelegate sendPluginResult:pluginResult callbackId:_command.callbackId];
 }
