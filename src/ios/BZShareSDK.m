@@ -7,6 +7,9 @@
 #import "WXApi.h"
 //新浪微博SDK头文件
 #import "WeiboSDK.h"
+//腾讯开放平台（对应QQ和QQ空间）SDK头文件
+#import <TencentOpenAPI/TencentOAuth.h>
+#import <TencentOpenAPI/QQApiInterface.h>
 
 @interface BZShareSDK()
 @property(strong,nonatomic) NSString* shareSDKiOSAppKey;
@@ -15,6 +18,8 @@
 @property(strong,nonatomic) NSString* weiboAppId;
 @property(strong,nonatomic) NSString* weiboAppSecret;
 @property(strong,nonatomic) NSString* weiboRedirectUrl;
+@property(strong,nonatomic) NSString* qqiOSAppId;
+@property(strong,nonatomic) NSString* qqiOSAppKey;
 @property(strong,nonatomic) CDVInvokedUrlCommand* command;
 @end
 
@@ -27,12 +32,16 @@
     _weiboAppId = [[self.commandDelegate settings] objectForKey:@"weiboappid"];
     _weiboAppSecret = [[self.commandDelegate settings] objectForKey:@"weiboappsecret"];
     _weiboRedirectUrl = [[self.commandDelegate settings] objectForKey:@"weiboredirecturl"];
+    _qqiOSAppId = [[self.commandDelegate settings] objectForKey:@"qqiosappid"];
+    _qqiOSAppKey = [[self.commandDelegate settings] objectForKey:@"qqiosappkey"];
     
     NSMutableArray *incomingSocialPlatforms = [NSMutableArray array];
     /**微信分享*/
     [incomingSocialPlatforms addObject:@(SSDKPlatformTypeWechat)];
     /**新浪微博分享*/
     [incomingSocialPlatforms addObject:@(SSDKPlatformTypeSinaWeibo)];
+    /**QQ分享 目前仅有QQ好友分享，不支持Qzone*/
+    [incomingSocialPlatforms addObject:@(SSDKPlatformTypeQQ)];
     
     [self initSocialPlatforms:incomingSocialPlatforms];
 }
@@ -56,6 +65,9 @@
             case SSDKPlatformTypeSinaWeibo:
                 [ShareSDKConnector connectWeibo:[WeiboSDK class]];
                 break;
+            case SSDKPlatformTypeQQ:
+                [ShareSDKConnector connectQQ:[QQApiInterface class] tencentOAuthClass:[TencentOAuth class]];
+                break;
             default:
                 break;
         }
@@ -71,6 +83,11 @@
                                           appSecret:_weiboAppSecret
                                         redirectUri:_weiboRedirectUrl
                                            authType:SSDKAuthTypeBoth];
+                break;
+            case SSDKPlatformTypeQQ:
+                [appInfo SSDKSetupQQByAppId:_qqiOSAppId
+                                     appKey:_qqiOSAppKey
+                                   authType:SSDKAuthTypeBoth];
                 break;
             default:
                 break;

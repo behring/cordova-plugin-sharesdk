@@ -13,6 +13,10 @@
     <preference name="WEIBO_APP_ID" />
     <preference name="WEIBO_APP_SECRET" />
     <preference name="WEIBO_REDIRECT_URL" />
+    <preference name="QQ_IOS_APP_ID" />
+    <!--其格式为：”QQ” ＋ AppId的16进制（如果appId转换的16进制数不够8位则在前面补0，如转换的是：5FB8B52，则最终填入为：QQ05FB8B52 注意：转换后的字母要大写） 转换16进制的方法：echo ‘ibase=10;obase=16;801312852′|bc，其中801312852为QQ的AppID-->
+    <preference name="QQ_IOS_APP_HEX_ID" />
+    <preference name="QQ_IOS_APP_KEY" />
     <engines>
         <!--android4.0或更高版本 mininumSdkTarget to 14-->
         <engine name="cordova-android" version=">=4.1.0" />
@@ -98,14 +102,23 @@
         <!--添加Scheme白名单 reference url http://wiki.mob.com/ios9-%E5%AF%B9sharesdk%E7%9A%84%E5%BD%B1%E5%93%8D%EF%BC%88%E9%80%82%E9%85%8Dios-9%E5%BF%85%E8%AF%BB%EF%BC%89/-->
         <config-file target="*-Info.plist" parent="LSApplicationQueriesSchemes">
             <array>
+                <!--wechat-->
                 <string>weixin</string>
                 <string>wechat</string>
+                <!--sina weibo-->
                 <string>sinaweibo</string>
                 <string>sinaweibohd</string>
                 <string>sinaweibosso</string>
                 <string>sinaweibohdsso</string>
                 <string>weibosdk</string>
                 <string>weibosdk2.5</string>
+                <!--qq friend-->
+                <string>mqqOpensdkSSoLogin</string>
+                <string>mqqopensdkapiV2</string>
+                <string>mqqopensdkapiV3</string>
+                <string>wtloginmqq2</string>
+                <string>mqq</string>
+                <string>mqqapi</string>
             </array>
         </config-file>
         <!--配置URL Scheme reference http://bbs.mob.com/thread-567-1-1.html-->
@@ -118,6 +131,7 @@
                     <array>
                         <string>$WECHAT_APP_ID</string>
                         <string>wb$WEIBO_APP_ID</string>
+                        <string>QQ$QQ_IOS_APP_HEX_ID</string>
                     </array>
                 </dict>
             </array>
@@ -157,6 +171,10 @@
         <header-file src="src/ios/ShareSDK/Support/PlatformSDK/SinaWeiboSDK/WeiboSDK.h" />
         <header-file src="src/ios/ShareSDK/Support/PlatformSDK/SinaWeiboSDK/WeiboSDK+Statistics.h" />
         <header-file src="src/ios/ShareSDK/Support/PlatformSDK/SinaWeiboSDK/WeiboUser.h" />
+        <!-- QQ Official -->
+        <resource-file src="src/ios/ShareSDK/Support/PlatformSDK/QQSDK/TencentOpenApi_IOS_Bundle.bundle" />
+        <framework src="src/ios/ShareSDK/Support/PlatformConnector/QQConnector.framework" custom="true" />
+        <framework src="src/ios/ShareSDK/Support/PlatformSDK/QQSDK/TencentOpenAPI.framework" custom="true" />
         <config-file target="config.xml" parent="/*">
             <feature name="ShareSDK">
                 <param name="ios-package" value="BZShareSDK" />
@@ -168,6 +186,8 @@
             <preference name="WeiboAppId" value="$WEIBO_APP_ID" />
             <preference name="WeiboAppSecret" value="$WEIBO_APP_SECRET" />
             <preference name="WeiboRedirectUrl" value="$WEIBO_REDIRECT_URL" />
+            <preference name="QQiOSAppId" value="$QQ_IOS_APP_ID" />
+            <preference name="QQiOSAppKey" value="$QQ_IOS_APP_KEY" />
         </config-file>
         <header-file src="src/ios/BZShareSDK.h" />
         <source-file src="src/ios/BZShareSDK.m" />
