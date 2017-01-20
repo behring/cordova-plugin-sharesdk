@@ -69,6 +69,10 @@
         <edit-config file="assets/ShareSDK.xml" target="/DevInfor/WechatMoments" mode="overwrite">
             <WechatMoments Id="5" SortId="5" AppId="$WECHAT_APP_ID" AppSecret="$WECHAT_APP_SECRET" BypassApproval="false" Enable="true" />
         </edit-config>
+        <!-- ShareByAppClient标识是否使用微博客户端分享，默认是false -->
+        <edit-config file="assets/ShareSDK.xml" target="/DevInfor/SinaWeibo" mode="overwrite">
+            <SinaWeibo Id="1" SortId="1" AppKey="$WEIBO_APP_ID" AppSecret="$WEIBO_APP_SECRET" RedirectUrl="$WEIBO_REDIRECT_URL" ShareByAppClient="true" Enable="true" />
+        </edit-config>
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
             <activity android:name="com.mob.tools.MobUIShell" android:theme="@android:style/Theme.Translucent.NoTitleBar" android:configChanges="keyboardHidden|orientation|screenSize" android:screenOrientation="portrait" android:windowSoftInputMode="stateHidden|adjustResize">
                 <!-- 调用新浪原生SDK，需要注册的回调activity -->
