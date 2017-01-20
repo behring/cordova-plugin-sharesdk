@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--id: 插件的标识，即发布到 plugins.cordova.io 的 ID,生成的插件文件夹名也与此相同-->
-<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" id="cordova-plugin-sharesdk" version="0.0.5">
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" id="cordova-plugin-sharesdk" version="0.0.6>
     <name>ShareSDK</name>
     <description>Cordova ShareSDK Plugin</description>
     <license>MIT</license>
