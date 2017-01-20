@@ -201,11 +201,11 @@ public class ShareSDKPlugin extends CordovaPlugin {
                 break;
             case SSDKPlatformTypeWechatTimeline:
                 sp = new WechatMoments.ShareParams();
+                sp.setShareType(Platform.SHARE_WEBPAGE);
                 platform = ShareSDK.getPlatform(WechatMoments.NAME);
                 break;
             case SSDKPlatformTypeWeibo:
                 sp = new SinaWeibo.ShareParams();
-                sp.setShareType(Platform.SHARE_WEBPAGE);
                 platform = ShareSDK.getPlatform(SinaWeibo.NAME);
                 break;
             default:
