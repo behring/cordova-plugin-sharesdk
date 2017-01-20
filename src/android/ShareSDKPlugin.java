@@ -17,6 +17,7 @@ import cn.sharesdk.framework.Platform;
 import cn.sharesdk.framework.PlatformActionListener;
 import cn.sharesdk.framework.ShareSDK;
 import cn.sharesdk.sina.weibo.SinaWeibo;
+import cn.sharesdk.tencent.qq.QQ;
 import cn.sharesdk.wechat.friends.Wechat;
 import cn.sharesdk.wechat.moments.WechatMoments;
 
@@ -30,6 +31,8 @@ public class ShareSDKPlugin extends CordovaPlugin {
     private final int SSDKPlatformTypeWeibo = 1;
     /** QQ空间 */
     private final int SSDKPlatformTypeQZone = 6;
+    /** QQ 好友 */
+    private final int SSDKPlatformTypeQQFriend = 24;
     /** 拷贝 */
     private final int SSDKPlatformTypeCopy = 21;
     /** 微信好友 */
@@ -154,6 +157,10 @@ public class ShareSDKPlugin extends CordovaPlugin {
                 sp = new SinaWeibo.ShareParams();
                 platform = ShareSDK.getPlatform(SinaWeibo.NAME);
                 break;
+            case SSDKPlatformTypeQQFriend:
+                sp = new QQ.ShareParams();
+                platform = ShareSDK.getPlatform(QQ.NAME);
+                break;
             default:
                 break;
         }
@@ -181,6 +188,10 @@ public class ShareSDKPlugin extends CordovaPlugin {
                 sp = new SinaWeibo.ShareParams();
                 platform = ShareSDK.getPlatform(SinaWeibo.NAME);
                 break;
+            case SSDKPlatformTypeQQFriend:
+                sp = new QQ.ShareParams();
+                platform = ShareSDK.getPlatform(QQ.NAME);
+                break;
             default:
                 break;
         }
@@ -207,6 +218,10 @@ public class ShareSDKPlugin extends CordovaPlugin {
             case SSDKPlatformTypeWeibo:
                 sp = new SinaWeibo.ShareParams();
                 platform = ShareSDK.getPlatform(SinaWeibo.NAME);
+                break;
+            case SSDKPlatformTypeQQFriend:
+                sp = new QQ.ShareParams();
+                platform = ShareSDK.getPlatform(QQ.NAME);
                 break;
             default:
                 break;

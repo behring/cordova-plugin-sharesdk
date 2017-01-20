@@ -17,6 +17,8 @@
     <!--其格式为：”QQ” ＋ AppId的16进制（如果appId转换的16进制数不够8位则在前面补0，如转换的是：5FB8B52，则最终填入为：QQ05FB8B52 注意：转换后的字母要大写） 转换16进制的方法：echo ‘ibase=10;obase=16;801312852′|bc，其中801312852为QQ的AppID-->
     <preference name="QQ_IOS_APP_HEX_ID" />
     <preference name="QQ_IOS_APP_KEY" />
+    <preference name="QQ_ANDROID_APP_ID" />
+    <preference name="QQ_ANDROID_APP_KEY" />
     <engines>
         <!--android4.0或更高版本 mininumSdkTarget to 14-->
         <engine name="cordova-android" version=">=4.1.0" />
@@ -47,6 +49,8 @@
         <lib-file src="src/android/ShareSDK/libs/ShareSDK-Wechat-Moments-2.8.0.jar" />
         <!--新浪微博jar-->
         <lib-file src="src/android/ShareSDK/libs/ShareSDK-SinaWeibo-2.8.0.jar" />
+        <!--QQ jar-->
+        <lib-file src="src/android/ShareSDK/libs/ShareSDK-QQ-2.8.0.jar" />
         <!--添加权限-->
         <config-file target="AndroidManifest.xml" parent="/*">
             <uses-permission android:name="android.permission.GET_TASKS" />
@@ -77,11 +81,23 @@
         <edit-config file="assets/ShareSDK.xml" target="/DevInfor/SinaWeibo" mode="overwrite">
             <SinaWeibo Id="1" SortId="1" AppKey="$WEIBO_APP_ID" AppSecret="$WEIBO_APP_SECRET" RedirectUrl="$WEIBO_REDIRECT_URL" ShareByAppClient="true" Enable="true" />
         </edit-config>
+        <!-- ShareByAppClient标识是否使用微博客户端分享，默认是false -->
+        <edit-config file="assets/ShareSDK.xml" target="/DevInfor/QQ" mode="overwrite">
+            <QQ Id="7" SortId="7" AppId="$QQ_ANDROID_APP_ID" AppKey="$QQ_ANDROID_APP_KEY" ShareByAppClient="true" Enable="true" />
+        </edit-config>
+
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
             <activity android:name="com.mob.tools.MobUIShell" android:theme="@android:style/Theme.Translucent.NoTitleBar" android:configChanges="keyboardHidden|orientation|screenSize" android:screenOrientation="portrait" android:windowSoftInputMode="stateHidden|adjustResize">
                 <!-- 调用新浪原生SDK，需要注册的回调activity -->
                 <intent-filter>
                     <action android:name="com.sina.weibo.sdk.action.ACTION_SDK_REQ_ACTIVITY" />
+                    <category android:name="android.intent.category.DEFAULT" />
+                </intent-filter>
+
+                <intent-filter>
+                    <data android:scheme="tencent$QQ_ANDROID_APP_ID" />
+                    <action android:name="android.intent.action.VIEW" />
+                    <category android:name="android.intent.category.BROWSABLE" />
                     <category android:name="android.intent.category.DEFAULT" />
                 </intent-filter>
             </activity>

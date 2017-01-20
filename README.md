@@ -25,7 +25,7 @@ cd ~/yourpath/cordovaproject
 2. 安装cordova-plugin-sharesdk。
 
 ```powershell
-cordova plugin add cordova-plugin-sharesdk --variable SHARESDK_ANDROID_APP_KEY=xxxxxx --variable SHARESDK_IOS_APP_KEY=xxxxxx --variable WECHAT_APP_ID=xxxxxx --variable WECHAT_APP_SECRET=xxxxxx --save
+cordova plugin add cordova-plugin-sharesdk --variable SHARESDK_ANDROID_APP_KEY=xxxx --variable SHARESDK_IOS_APP_KEY=xxxx --variable WECHAT_APP_ID=xxxx --variable WECHAT_APP_SECRET=xxxx --variable WEIBO_APP_ID=xxxx --variable WEIBO_APP_SECRET=xxxx --variable WEIBO_REDIRECT_URL=http://xxxx --variable QQ_IOS_APP_ID=xxxx --variable QQ_IOS_APP_HEX_ID=QQxxxx --variable QQ_IOS_APP_KEY=xxxx
 ```
 
 3. 重新构建cordova项目。
@@ -106,7 +106,7 @@ cd ~/yourpath/ionicproject
 2. 安装cordova-plugin-sharesdk。
 
 ```powershell
-ionic plugin add cordova-plugin-sharesdk --variable SHARESDK_ANDROID_APP_KEY=xxxxxx --variable SHARESDK_IOS_APP_KEY=xxxxxx --variable WECHAT_APP_ID=xxxxxx --variable WECHAT_APP_SECRET=xxxxxx --save
+ionic plugin add cordova-plugin-sharesdk --variable SHARESDK_ANDROID_APP_KEY=xxxx --variable SHARESDK_IOS_APP_KEY=xxxx --variable WECHAT_APP_ID=xxxx --variable WECHAT_APP_SECRET=xxxx --variable WEIBO_APP_ID=xxxx --variable WEIBO_APP_SECRET=xxxx --variable WEIBO_REDIRECT_URL=http://xxxx --variable QQ_IOS_APP_ID=xxxx --variable QQ_IOS_APP_HEX_ID=QQxxxx --variable QQ_IOS_APP_KEY=xxxx
 ```
 
 3. 重新构建cordova项目。
@@ -156,6 +156,12 @@ declare var ShareSDK: any;
 | SHARESDK_ANDROID_APP_KEY | [ShareSDK注册(Android)](http://www.mob.com/) |
 | WECHAT_APP_ID            | [微信开放平台注册](https://open.weixin.qq.com/)  |
 | WECHAT_APP_SECRET        | [微信开放平台注册](https://open.weixin.qq.com/)  |
+| WEIBO_APP_ID             | [新浪微博开放平台注册](http://open.weibo.com/)     |
+| WEIBO_APP_SECRET         | [新浪微博开放平台注册](http://open.weibo.com/)     |
+| WEIBO_REDIRECT_URL       | 微博回调地址：我的应用/应用信息/高级信息/OAUTH2.0授权设置里配置    |
+| QQ_IOS_APP_ID            | [腾讯开放平台注册](http://open.qq.com/)          |
+| QQ_IOS_APP_HEX_ID        | 由QQ_IOS_APP_ID生成。 其格式为：”QQ” ＋ AppId的16进制（如果appId转换的16进制数不够8位则在前面补0，如转换的是：5FB8B52，则最终填入为：QQ05FB8B52 注意：转换后的字母要大写） 转换16进制的方法：echo ‘ibase=10;obase=16;801312852′\|bc，其中801312852为QQ的AppID |
+| QQ_IOS_APP_KEY           | [腾讯开放平台注册](http://open.qq.com/)          |
 
 
 
@@ -190,6 +196,13 @@ ShareSDK：提供platformType，和shareType常量。如下表：
 
 
 
+| 分享响应状态                        | 说明   |
+| ----------------------------- | ---- |
+| ShareSDK.PlatformType.Begin   | 开始分享 |
+| ShareSDK.PlatformType.Success | 分享成功 |
+| ShareSDK.PlatformType.Fail    | 分享失败 |
+| ShareSDK.PlatformType.Cancel  | 取消分享 |
+
 ### Demo地址
 
 https://github.com/zhaolin0801/cordova-sharesdk-demo
@@ -199,5 +212,5 @@ https://github.com/zhaolin0801/cordova-sharesdk-demo
 ### 问题
 
 1. Android微信分享需要使用审核通过后的签名文件打包才能分享。
-2. 目前仅支持android和ios平台的微信分享。包括：纯文本，图片，网页。
+2. 目前仅支持android和ios平台的微信好友、微信朋友前、微博、QQ好友分享以及拷贝链接功能。分享类型包括：纯文本，单张图片，网页。
 
