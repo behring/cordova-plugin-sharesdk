@@ -25,7 +25,7 @@ cd ~/yourpath/cordovaproject
 2. 安装cordova-plugin-sharesdk。
 
 ```powershell
-cordova plugin add cordova-plugin-sharesdk --variable SHARESDK_ANDROID_APP_KEY=xxxx --variable SHARESDK_IOS_APP_KEY=xxxx --variable WECHAT_APP_ID=xxxx --variable WECHAT_APP_SECRET=xxxx --variable WEIBO_APP_ID=xxxx --variable WEIBO_APP_SECRET=xxxx --variable WEIBO_REDIRECT_URL=http://xxxx --variable QQ_IOS_APP_ID=xxxx --variable QQ_IOS_APP_HEX_ID=QQxxxx --variable QQ_IOS_APP_KEY=xxxx
+cordova plugin add cordova-plugin-sharesdk --variable SHARESDK_ANDROID_APP_KEY=xxxx --variable SHARESDK_IOS_APP_KEY=xxxx --variable WECHAT_APP_ID=xxxx --variable WECHAT_APP_SECRET=xxxx --variable WEIBO_APP_ID=xxxx --variable WEIBO_APP_SECRET=xxxx --variable WEIBO_REDIRECT_URL=http://xxxx --variable QQ_IOS_APP_ID=xxxx --variable QQ_IOS_APP_HEX_ID=QQxxxx --variable QQ_IOS_APP_KEY=xxxx --variable QQ_ANDROID_APP_ID=xxxx --variable QQ_ANDROID_APP_KEY=xxxx
 ```
 
 3. 重新构建cordova项目。
@@ -106,7 +106,7 @@ cd ~/yourpath/ionicproject
 2. 安装cordova-plugin-sharesdk。
 
 ```powershell
-ionic plugin add cordova-plugin-sharesdk --variable SHARESDK_ANDROID_APP_KEY=xxxx --variable SHARESDK_IOS_APP_KEY=xxxx --variable WECHAT_APP_ID=xxxx --variable WECHAT_APP_SECRET=xxxx --variable WEIBO_APP_ID=xxxx --variable WEIBO_APP_SECRET=xxxx --variable WEIBO_REDIRECT_URL=http://xxxx --variable QQ_IOS_APP_ID=xxxx --variable QQ_IOS_APP_HEX_ID=QQxxxx --variable QQ_IOS_APP_KEY=xxxx
+ionic plugin add cordova-plugin-sharesdk --variable SHARESDK_ANDROID_APP_KEY=xxxx --variable SHARESDK_IOS_APP_KEY=xxxx --variable WECHAT_APP_ID=xxxx --variable WECHAT_APP_SECRET=xxxx --variable WEIBO_APP_ID=xxxx --variable WEIBO_APP_SECRET=xxxx --variable WEIBO_REDIRECT_URL=http://xxxx --variable QQ_IOS_APP_ID=xxxx --variable QQ_IOS_APP_HEX_ID=QQxxxx --variable QQ_IOS_APP_KEY=xxxx --variable QQ_ANDROID_APP_ID=xxxx --variable QQ_ANDROID_APP_KEY=xxxx
 ```
 
 3. 重新构建cordova项目。
@@ -162,6 +162,8 @@ declare var ShareSDK: any;
 | QQ_IOS_APP_ID            | [腾讯开放平台注册](http://open.qq.com/)          |
 | QQ_IOS_APP_HEX_ID        | 由QQ_IOS_APP_ID生成。 其格式为：”QQ” ＋ AppId的16进制（如果appId转换的16进制数不够8位则在前面补0，如转换的是：5FB8B52，则最终填入为：QQ05FB8B52 注意：转换后的字母要大写） 转换16进制的方法：echo ‘ibase=10;obase=16;801312852′\|bc，其中801312852为QQ的AppID |
 | QQ_IOS_APP_KEY           | [腾讯开放平台注册](http://open.qq.com/)          |
+| QQ_ANDROID_APP_ID        | [腾讯开放平台注册](http://open.qq.com/)          |
+| QQ_ANDROID_APP_KEY       | [腾讯开放平台注册](http://open.qq.com/)          |
 
 
 
@@ -173,16 +175,20 @@ sharesdk：只提供一个share方法，shareInfo是一个object类型。包含�
 
 ```javascript
 sharesdk.share(platformType, shareType, shareInfo,
-                   function(success){},
-                   function(fail){});
+                   function(){/**分享成功回调**/},
+                   function(msg){/**分享失败或者取消分享回调**/});
 ```
+
+> 分享失败或取消分享返回msg，msg是**json对象**。通过msg.state判断是取消分享还是分享失败。如果是分享失败。msg.error获取失败信息。
+
+
 
 ShareSDK：提供platformType，和shareType常量。如下表：
 
 | platformType类型                       | 说明    |
 | ------------------------------------ | ----- |
 | ShareSDK.PlatformType.QQFriend       | QQ好友  |
-| ShareSDK.PlatformType.QZone          | QQ空间  |
+| ShareSDK.PlatformType.QZone（暂不支持）    | QQ空间  |
 | ShareSDK.PlatformType.Copy           | 拷贝    |
 | ShareSDK.PlatformType.WechatSession  | 微信好友  |
 | ShareSDK.PlatformType.WechatTimeline | 微信朋友圈 |
