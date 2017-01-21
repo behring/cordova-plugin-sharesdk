@@ -25,7 +25,7 @@ cd ~/yourpath/cordovaproject
 2. 安装cordova-plugin-sharesdk。
 
 ```powershell
-cordova plugin add cordova-plugin-sharesdk --variable SHARESDK_ANDROID_APP_KEY=xxxx --variable SHARESDK_IOS_APP_KEY=xxxx --variable WECHAT_APP_ID=xxxx --variable WECHAT_APP_SECRET=xxxx --variable WEIBO_APP_ID=xxxx --variable WEIBO_APP_SECRET=xxxx --variable WEIBO_REDIRECT_URL=http://xxxx --variable QQ_IOS_APP_ID=xxxx --variable QQ_IOS_APP_HEX_ID=QQxxxx --variable QQ_IOS_APP_KEY=xxxx --variable QQ_ANDROID_APP_ID=xxxx --variable QQ_ANDROID_APP_KEY=xxxx
+cordova plugin add cordova-plugin-sharesdk --variable SHARESDK_ANDROID_APP_KEY=xxxx --variable SHARESDK_IOS_APP_KEY=xxxx --variable WECHAT_APP_ID=xxxx --variable WECHAT_APP_SECRET=xxxx --variable WEIBO_APP_ID=xxxx --variable WEIBO_APP_SECRET=xxxx --variable WEIBO_REDIRECT_URL=http://xxxx --variable QQ_IOS_APP_ID=xxxx --variable QQ_IOS_APP_HEX_ID=xxxx --variable QQ_IOS_APP_KEY=xxxx --variable QQ_ANDROID_APP_ID=xxxx --variable QQ_ANDROID_APP_KEY=xxxx
 ```
 
 3. 重新构建cordova项目。
@@ -160,7 +160,7 @@ declare var ShareSDK: any;
 | WEIBO_APP_SECRET         | [新浪微博开放平台注册](http://open.weibo.com/)     |
 | WEIBO_REDIRECT_URL       | 微博回调地址：我的应用/应用信息/高级信息/OAUTH2.0授权设置里配置    |
 | QQ_IOS_APP_ID            | [腾讯开放平台注册](http://open.qq.com/)          |
-| QQ_IOS_APP_HEX_ID        | 由QQ_IOS_APP_ID生成。 其格式为：”QQ” ＋ AppId的16进制（如果appId转换的16进制数不够8位则在前面补0，如转换的是：5FB8B52，则最终填入为：QQ05FB8B52 注意：转换后的字母要大写） 转换16进制的方法：echo ‘ibase=10;obase=16;801312852′\|bc，其中801312852为QQ的AppID |
+| QQ_IOS_APP_HEX_ID        | 由QQ_IOS_APP_ID生成。 其格式为：”QQ” ＋ AppId的16进制（如果appId转换的16进制数不够8位则在前面补0，如转换的是：5FB8B52，则最终填入为：QQ05FB8B52 注意：转换后的字母要大写） 转换16进制的方法：echo ‘ibase=10;obase=16;801312852′\|bc，其中801312852为QQ的AppID。**传入参数不需要加QQ，只需要传入8位数字** |
 | QQ_IOS_APP_KEY           | [腾讯开放平台注册](http://open.qq.com/)          |
 | QQ_ANDROID_APP_ID        | [腾讯开放平台注册](http://open.qq.com/)          |
 | QQ_ANDROID_APP_KEY       | [腾讯开放平台注册](http://open.qq.com/)          |
