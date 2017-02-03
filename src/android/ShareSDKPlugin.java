@@ -7,12 +7,11 @@ import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaInterface;
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CordovaWebView;
+import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.HashMap;
-import java.util.Locale;
-
 import cn.sharesdk.framework.Platform;
 import cn.sharesdk.framework.PlatformActionListener;
 import cn.sharesdk.framework.ShareSDK;
@@ -26,6 +25,10 @@ import cn.sharesdk.wechat.moments.WechatMoments;
  * This class ShareSDKPlugin a string called from JavaScript.
  */
 public class ShareSDKPlugin extends CordovaPlugin {
+    private static final int SINA_WEIBO_CLIENT = 1;
+    private static final int WECHAT_CLIENT = 2;
+    private static final int QQ_CLIENT = 3;
+
     /**平台和分享类型的值参考ShareSDK ios源码中的值*/
     /** 新浪微博 */
     private final int SSDKPlatformTypeWeibo = 1;
@@ -105,6 +108,9 @@ public class ShareSDKPlugin extends CordovaPlugin {
             JSONObject shareInfo = args.optJSONObject(2);
             this.share(platformType, shareType, shareInfo, callbackContext);
             return true;
+        } else if(action.equals("isInstallClient")) {
+            int clientType = args.optInt(0);
+            isInstallClient(clientType, callbackContext);
         }
         return false;
     }
@@ -129,6 +135,34 @@ public class ShareSDKPlugin extends CordovaPlugin {
             default:
                 break;
         }
+    }
+
+    private void isInstallClient(int clientType, CallbackContext callbackContext) {
+        boolean isInstallClient;
+        Platform platform = null;
+        switch (clientType) {
+            case SINA_WEIBO_CLIENT:
+                platform = ShareSDK.getPlatform(SinaWeibo.NAME);
+                break;
+            case WECHAT_CLIENT:
+                platform = ShareSDK.getPlatform(Wechat.NAME);
+                break;
+            case QQ_CLIENT:
+                platform = ShareSDK.getPlatform(QQ.NAME);
+                break;
+            default:
+                break;
+        }
+
+        if (platform != null) {
+            isInstallClient = platform.isClientValid();
+            PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, isInstallClient);
+            callbackContext.sendPluginResult(pluginResult);
+        }else {
+            PluginResult pluginResult = new PluginResult(PluginResult.Status.ERROR);
+            callbackContext.sendPluginResult(pluginResult);
+        }
+
     }
 
     private void copyLink(JSONObject shareInfo, final CallbackContext callbackContext) {

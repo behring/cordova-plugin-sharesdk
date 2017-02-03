@@ -109,19 +109,13 @@ int const QQ_CLIENT = 3;
     NSNumber* clientType = [command.arguments objectAtIndex:0];
     switch ([clientType integerValue]) {
         case SINA_WEIBO_CLIENT:
-            if ([WeiboSDK isWeiboAppInstalled]) {
-                isInstallClient = YES;
-            }
+            isInstallClient = [WeiboSDK isWeiboAppInstalled];
             break;
         case WECHAT_CLIENT:
-            if ([WXApi isWXAppInstalled]) {
-                isInstallClient = YES;
-            }
+            isInstallClient = [WXApi isWXAppInstalled];
             break;
         case QQ_CLIENT:
-            if ([QQApiInterface isQQInstalled]) {
-                isInstallClient = YES;
-            }
+            isInstallClient = [QQApiInterface isQQInstalled];
             break;
         default:
             break;
