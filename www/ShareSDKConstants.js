@@ -32,6 +32,18 @@ module.exports = {
         WebPage: 3
     },
 
+    /**
+     * 客户端类型
+     */
+    ClientType: {
+        /** 微博客户端 */
+        SinaWeibo: 1,
+        /** 微信客户端 */
+        Wechat: 2,
+        /** QQ客户端 */
+        QQ: 3
+    },
+
     /** 分享响应状态 */  
     ResponseState: {
         /** 开始 */

@@ -25,8 +25,8 @@
         <!--ios8或更高版本-->
         <engine name="cordova-ios" version=">=4.0.0" />
     </engines>
-    <js-module src="www/ShareSDK.js" name="share">
-        <clobbers target="sharesdk.share" />
+    <js-module src="www/ShareSDK.js" name="sharesdk">
+        <clobbers target="sharesdk" />
     </js-module>
     <js-module src="www/ShareSDKConstants.js" name="ShareSDK">
         <clobbers target="ShareSDK" />
