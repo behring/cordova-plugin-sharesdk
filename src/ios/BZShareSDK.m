@@ -42,6 +42,7 @@ int const QQ_CLIENT = 3;
     
     NSMutableArray *incomingSocialPlatforms = [NSMutableArray array];
     /**微信分享*/
+    [WXApi registerApp:_wechatAppId];//为了能够判断微信客户端是否安装，必须要注册微信的appid
     [incomingSocialPlatforms addObject:@(SSDKPlatformTypeWechat)];
     /**新浪微博分享*/
     [incomingSocialPlatforms addObject:@(SSDKPlatformTypeSinaWeibo)];
