@@ -11,6 +11,10 @@
 #import <TencentOpenAPI/TencentOAuth.h>
 #import <TencentOpenAPI/QQApiInterface.h>
 
+int const SINA_WEIBO_CLIENT = 1;
+int const WECHAT_CLIENT = 2;
+int const QQ_CLIENT = 3;
+
 @interface BZShareSDK()
 @property(strong,nonatomic) NSString* shareSDKiOSAppKey;
 @property(strong,nonatomic) NSString* wechatAppId;
@@ -24,6 +28,7 @@
 @end
 
 @implementation BZShareSDK
+
 - (void)pluginInitialize
 {
     _shareSDKiOSAppKey = [[self.commandDelegate settings] objectForKey:@"sharesdkiosappkey"];
@@ -93,6 +98,35 @@
                 break;
         }
     }];
+}
+
+- (void)isInstallClient:(CDVInvokedUrlCommand*)command
+{
+    BOOL isInstallClient = NO;
+    CDVPluginResult* pluginResult = nil;
+    _command = command;
+    NSNumber* clientType = [command.arguments objectAtIndex:0];
+    switch ([clientType integerValue]) {
+        case SINA_WEIBO_CLIENT:
+            if ([WeiboSDK isWeiboAppInstalled]) {
+                isInstallClient = YES;
+            }
+            break;
+        case WECHAT_CLIENT:
+            if ([WXApi isWXAppInstalled]) {
+                isInstallClient = YES;
+            }
+            break;
+        case QQ_CLIENT:
+            if ([QQApiInterface isQQInstalled]) {
+                isInstallClient = YES;
+            }
+            break;
+        default:
+            break;
+    }
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:isInstallClient];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:_command.callbackId];
 }
 
 - (void)share:(CDVInvokedUrlCommand*)command
