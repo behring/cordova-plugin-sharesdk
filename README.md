@@ -93,6 +93,43 @@ function shareWebPageToWechatTimeline() {
 }
 ```
 
+5.下面代码判断是否安装响应的客户端
+
+```javascript
+/** 是否安装微博客户端 **/
+function checkWeiboClient() {
+    sharesdk.isInstallClient.promise(ShareSDK.ClientType.SinaWeibo).then(function(isInstall){
+        if(isInstall) {
+            alert("新浪微博客户端已安装");
+        }else {
+            alert("未安装新浪微博客户端");
+        }
+    });
+}
+
+/** 是否安装QQ客户端 **/
+function checkQQClient() {
+    sharesdk.isInstallClient.promise(ShareSDK.ClientType.QQ).then(function(isInstall){
+        if(isInstall) {
+            alert("QQ客户端已安装");
+        }else {
+            alert("未安装QQ客户端");
+        }
+    });
+}
+
+/** 是否安装微信客户端 **/
+function checkWechatClient() {
+    sharesdk.isInstallClient.promise(ShareSDK.ClientType.Wechat).then(function(isInstall){
+        if(isInstall) {
+            alert("微信客户端已安装");
+        }else {
+            alert("未安装微信客户端");
+        }
+    });
+}
+```
+
 
 
 #### ionic2项目
@@ -183,9 +220,19 @@ sharesdk.share(platformType, shareType, shareInfo,
 
 
 
-ShareSDK：提供platformType，和shareType常量。如下表：
+ShareSDK：提供ClientType，PlatformType，ShareType，ResponseState常量。如下表：
 
-| platformType类型                       | 说明    |
+
+
+| 客户端类型(用于判断是否安装了相应的客户端)        | 说明      |
+| ----------------------------- | ------- |
+| ShareSDK.ClientType.SinaWeibo | 新浪微博客户端 |
+| ShareSDK.ClientType.Wechat    | 微信客户端   |
+| ShareSDK.ClientType.QQ        | QQ客户端   |
+
+
+
+| 平台类型（分享到指定平台）                        | 说明    |
 | ------------------------------------ | ----- |
 | ShareSDK.PlatformType.QQFriend       | QQ好友  |
 | ShareSDK.PlatformType.QZone（暂不支持）    | QQ空间  |
@@ -194,7 +241,9 @@ ShareSDK：提供platformType，和shareType常量。如下表：
 | ShareSDK.PlatformType.WechatTimeline | 微信朋友圈 |
 | ShareSDK.PlatformType.SinaWeibo      | 新浪微博  |
 
-| shareType类型                | 说明   |
+
+
+| 分享内容类型                     | 说明   |
 | -------------------------- | ---- |
 | ShareSDK.ShareType.Text    | 文本类型 |
 | ShareSDK.ShareType.Image   | 图片类型 |
@@ -202,12 +251,12 @@ ShareSDK：提供platformType，和shareType常量。如下表：
 
 
 
-| 分享响应状态                        | 说明   |
-| ----------------------------- | ---- |
-| ShareSDK.PlatformType.Begin   | 开始分享 |
-| ShareSDK.PlatformType.Success | 分享成功 |
-| ShareSDK.PlatformType.Fail    | 分享失败 |
-| ShareSDK.PlatformType.Cancel  | 取消分享 |
+| 分享响应状态                         | 说明   |
+| ------------------------------ | ---- |
+| ShareSDK.ResponseState.Begin   | 开始分享 |
+| ShareSDK.ResponseState.Success | 分享成功 |
+| ShareSDK.ResponseState.Fail    | 分享失败 |
+| ShareSDK.ResponseState.Cancel  | 取消分享 |
 
 ### Demo地址
 
