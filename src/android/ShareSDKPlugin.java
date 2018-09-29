@@ -243,27 +243,31 @@ public class ShareSDKPlugin extends CordovaPlugin {
                 sp = new Wechat.ShareParams();
                 sp.setShareType(Platform.SHARE_WEBPAGE);
                 platform = ShareSDK.getPlatform(Wechat.NAME);
+                sp.setUrl(shareInfo.optString("url"));
                 break;
             case SSDKPlatformTypeWechatTimeline:
                 sp = new WechatMoments.ShareParams();
                 sp.setShareType(Platform.SHARE_WEBPAGE);
                 platform = ShareSDK.getPlatform(WechatMoments.NAME);
+                sp.setUrl(shareInfo.optString("url"));
                 break;
             case SSDKPlatformTypeWeibo:
                 sp = new SinaWeibo.ShareParams();
                 platform = ShareSDK.getPlatform(SinaWeibo.NAME);
+                sp.setUrl(shareInfo.optString("url"));
                 break;
             case SSDKPlatformTypeQQFriend:
                 sp = new QQ.ShareParams();
                 platform = ShareSDK.getPlatform(QQ.NAME);
+                sp.setTitleUrl(shareInfo.optString("url"));
                 break;
             default:
+                sp.setUrl(shareInfo.optString("url"));
                 break;
         }
 
         sp.setImageUrl(shareInfo.optString("icon"));
         sp.setTitle(shareInfo.optString("title"));
-        sp.setUrl(shareInfo.optString("url"));
         sp.setText(shareInfo.optString("text"));
         platform.setPlatformActionListener(platformActionStateListener);
         platform.share(sp);
